@@ -47,8 +47,7 @@ defmodule FungifarmWeb.MixProject do
       {:fungifarm, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:pubsub, "~> 1.0"},
-      {:poison, "~> 3.1"}
+      {:pubsub, "~> 1.0"}
     ]
   end
 

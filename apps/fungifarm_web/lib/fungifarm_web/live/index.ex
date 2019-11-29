@@ -4,21 +4,39 @@ defmodule FungifarmWeb.Live.Index do
   alias Fungifarm.Database
 
   def mount(_session, socket) do
+    PubSub.subscribe(self(), :fake_sensor_data)
+
     alerts = Database.get_something()
+    sensordata = []
     clicks = 0
-    data = Poison.encode!([[175, 60], [190, 80], [180, 75]])
-    {:ok, assign(socket, clicks: clicks, data: data, alerts: alerts)}
+
+    {:ok,
+     socket |> assign(
+       clicks: clicks,
+       alerts: alerts,
+       sensordata: sensordata
+     )
+    }
   end
 
   def render(assigns) do
     FungifarmWeb.PageView.render("index.html", assigns)
   end
 
+  # events from the ui
+
   def handle_event("increase_click", %{"amount" => amount} = _values, socket) do
     {amount, ""} = Integer.parse(amount)
-    IO.inspect(amount)
+
     clicks = socket.assigns.clicks + amount
-    IO.inspect(clicks)
-    {:noreply, assign(socket, clicks: clicks)}
+    {:noreply, socket |> assign(clicks: clicks)}
   end
+
+  # events from the farmunit
+
+  def handle_info({:sensor_update, %{value: value}}, socket) do
+    sensordata = Enum.take(socket.assigns.sensordata ++ [value], -10)
+    {:noreply, socket |> assign( sensordata: sensordata )}
+  end
+
 end

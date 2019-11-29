@@ -8,8 +8,14 @@
     <button phx-click="increase_click" phx-value-amount="1">+1</button>
 
 
-    <%= render FungifarmWeb.PageView, "graph.html", graph: [], title: "successful jobs/sec" %>
+    <%= render FungifarmWeb.PageView, "graph.html", graph: @sensordata, title: "successful jobs/sec", width: 250, height: 100 %>
 
+    <div>
+
+      <%= for data <- @sensordata do %>
+        <span><%= data %></span><br>
+      <% end %>
+    </div>
     </div>
   </div>
 
