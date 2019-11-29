@@ -1,0 +1,23 @@
+<svg viewBox="0 0 250 250" height="500" class="chart">
+  <style>
+    .title { font-size: 30px;}
+  </style>
+
+  <g transform="translate(100, 100)">
+    <%# title %>
+    <g stroke="black">
+      <text class="title" text-anchor="middle" dominant-baseline="central" x="300" y="-50" fill="black">
+        <%= @title %>
+      </text>
+    </g>
+
+    <%# axes %>
+    <g stroke-width="2" stroke="black">
+      <line x1="0" x2="0" y1="0" y2="100"/>
+      <line x1="0" x2="100" y1="100" y2="100"/>
+    </g>
+
+    <%# data points %>
+    <polyline fill="none" stroke="#0074d9" stroke-width="2" points="10,12,12,32,43,54,65,76,76,87,78"/>
+  </g>
+</svg>
