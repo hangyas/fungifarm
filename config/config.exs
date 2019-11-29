@@ -19,7 +19,10 @@ config :fungifarm_web, FungifarmWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "RJLZsOpkp+WN9aJmbJaMtGcB3coiq7mNrgpnv2jB8Z9iue9C9C8t4qPdjA1y3meb",
   render_errors: [view: FungifarmWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: FungifarmWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: FungifarmWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [
+    signing_salt: "Y7EM1G2/QaBJ4y6qRR2e/ai31+38XSVA"
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
