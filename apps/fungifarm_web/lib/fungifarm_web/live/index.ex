@@ -1,10 +1,13 @@
 defmodule FungifarmWeb.Live.Index do
   use Phoenix.LiveView
 
+  alias Fungifarm.Database
+
   def mount(_session, socket) do
+    alerts = Database.get_something()
     clicks = 0
     data = Poison.encode!([[175, 60], [190, 80], [180, 75]])
-    {:ok, assign(socket, clicks: clicks, data: data)}
+    {:ok, assign(socket, clicks: clicks, data: data, alerts: alerts)}
   end
 
   def render(assigns) do

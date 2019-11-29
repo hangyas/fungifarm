@@ -35,7 +35,10 @@ defmodule Fungifarm.MixProject do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    []
+    [
+      {:mongodb, ">= 0.0.0"},
+      {:poolboy, ">= 0.0.0"}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
