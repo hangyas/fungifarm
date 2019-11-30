@@ -5,7 +5,14 @@ defmodule Fungifarm.Application do
     import Supervisor.Spec
 
     children = [
-      worker(Mongo, [[name: :mongo, database: "habzsibot", pool_size: 2, url: Application.get_env(:fungifarm, :db_url)]])
+      worker(Mongo, [
+        [
+          name: :mongo,
+          database: "habzsibot",
+          pool_size: 2,
+          url: Application.get_env(:fungifarm, :db_url)
+        ]
+      ])
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Fungifarm.Supervisor)

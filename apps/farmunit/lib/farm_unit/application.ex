@@ -4,7 +4,8 @@ defmodule FarmUnit.Application do
   def start(_type, _args) do
     children = [
       FarmUnit.FakeSensor,
-      PubSub
+      PubSub,
+      {Task.Supervisor, name: FarmUnit.Datasource.SubscribingTasks}
     ]
 
     opts = [strategy: :one_for_one, name: FarmUnit.Supervisor]

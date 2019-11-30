@@ -5,21 +5,21 @@ defmodule FarmUnit.FakeSensor do
   @update_interval 1_000
 
   def start_link(_arg) do
-    Task.start_link(&check/0)
+    Task.start_link(&loop/0)
   end
 
-  def check() do
+  def loop() do
     receive do
       # not doing anything with messages
     after
       # receive timeout
       @update_interval ->
         emmit_results()
-        check()
+        loop()
     end
   end
 
   defp emmit_results() do
-    PubSub.publish(@topic, {:sensor_update, %{name: "vmi", value: :rand.uniform(100)}})
+    FarmUnit.Datasource.publish(@topic, {:sensor_update, %{name: "vmi", value: :rand.uniform(100)}})
   end
 end

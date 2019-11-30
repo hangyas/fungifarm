@@ -4,19 +4,19 @@ defmodule FungifarmWeb.Live.Index do
   alias Fungifarm.Database
 
   def mount(_session, socket) do
-    PubSub.subscribe(self(), :fake_sensor_data)
+    subscribe_to_sensors()
 
     alerts = Database.get_something()
     sensordata = []
     clicks = 0
 
     {:ok,
-     socket |> assign(
+     socket
+     |> assign(
        clicks: clicks,
        alerts: alerts,
        sensordata: sensordata
-     )
-    }
+     )}
   end
 
   def render(assigns) do
@@ -36,7 +36,21 @@ defmodule FungifarmWeb.Live.Index do
 
   def handle_info({:sensor_update, %{value: value}}, socket) do
     sensordata = Enum.take(socket.assigns.sensordata ++ [value], -10)
-    {:noreply, socket |> assign( sensordata: sensordata )}
+    {:noreply, socket |> assign(sensordata: sensordata)}
+  end
+
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
+  # private functions
+
+  defp subscribe_to_sensors() do
+    FarmUnit.Datasource.subscribe(
+      Application.get_env(:fungifarm, :farmunit_node),
+      self(),
+      Application.get_env(:fungifarm, :sensors)
+    )
   end
 
 end
