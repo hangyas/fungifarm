@@ -1,9 +1,14 @@
 defmodule Fungifarm.Database do
+  alias Fungifarm.Database.Impl
+  @behaviour Impl
 
-  def get_something() do
-    Mongo.find(:mongo, "alerts", %{})
-    |> Enum.to_list()
-    |> Enum.map(fn e -> e["text"] end)
+  @impl true
+  def get_something(), do: impl().get_something()
+
+  @impl true
+  def save(data), do: impl().save(data)
+
+  defp impl do
+    Application.get_env(:fungifarm, :database, __MODULE__.InMemoryImpl)
   end
-
 end

@@ -23,5 +23,6 @@
   "poolboy": {:hex, :poolboy, "1.5.2", "392b007a1693a64540cead79830443abf5762f5d30cf50bc95cb2c1aaafa006b", [:rebar3], [], "hexpm"},
   "pubsub": {:hex, :pubsub, "1.1.1", "617114f865163b5e3df4821dbc0fec169d4c2775b79d69a6c443378219a7c252", [:mix], [], "hexpm"},
   "ranch": {:hex, :ranch, "1.7.1", "6b1fab51b49196860b733a49c07604465a47bdb78aa10c1c16a3d199f7f8c881", [:rebar3], [], "hexpm"},
+  "singleton": {:hex, :singleton, "1.0.0", "fd470707f33f47167b1a788605d2ec1c8c16107f389ca550c6895ed565439bbf", [:mix], [], "hexpm"},
   "telemetry": {:hex, :telemetry, "0.4.1", "ae2718484892448a24470e6aa341bc847c3277bfb8d4e9289f7474d752c09c7f", [:rebar3], [], "hexpm"},
 }

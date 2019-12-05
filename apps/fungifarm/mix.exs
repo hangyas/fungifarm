@@ -37,7 +37,8 @@ defmodule Fungifarm.MixProject do
   defp deps do
     [
       {:mongodb, ">= 0.0.0"},
-      {:poolboy, ">= 0.0.0"}
+      {:poolboy, ">= 0.0.0"},
+      {:pubsub, "~> 1.0"}
     ]
   end
 

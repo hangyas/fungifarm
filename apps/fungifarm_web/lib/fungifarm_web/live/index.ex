@@ -6,7 +6,7 @@ defmodule FungifarmWeb.Live.Index do
   def mount(_session, socket) do
     subscribe_to_sensors()
 
-    alerts = Database.get_something()
+    {:ok, alerts} = Database.get_something()
     sensordata = []
     clicks = 0
 
@@ -46,11 +46,8 @@ defmodule FungifarmWeb.Live.Index do
   # private functions
 
   defp subscribe_to_sensors() do
-    FarmUnit.Datasource.subscribe(
-      Application.get_env(:fungifarm, :farmunit_node),
-      self(),
-      Application.get_env(:fungifarm, :sensors)
-    )
+    PubSub.subscribe(self(), :fake_sensor_data)
+      # Application.get_env(:fungifarm, :sensors)
   end
 
 end
