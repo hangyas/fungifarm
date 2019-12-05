@@ -1,44 +1,48 @@
 body {
-  /* background: rgba(0, 0, 0, 0.015); */
+  color: #0d112b;
 }
 
 .content {
   margin: 0px 100px;
 }
 
+.panel {
+  border-radius: 6px;
+  margin: 10px;
+}
+
 .panel>.header {
   padding: 10px;
   font-size: 13px;
   line-height: 20px;
-  color: #586069;
-  background-color: #f1f8ff;
-  border: 1px solid #c8e1ff;
-  border-radius: 3px 3px 0 0;
+  color: #fff;
 }
 
 .panel>.body {
-  border: 1px solid #d1d5da;
   border-top: none;
-  border-radius: 0 0 3px 3px;
   padding: 20px;
-  background: white;
 }
 
 button {
-  border: 1px solid rgba(27, 31, 35, .2);
-  background-color: rgb(239, 243, 246);
-  background-image: linear-gradient(-180deg, rgb(250, 251, 252), rgb(239, 243, 246) 90%);
-  border: 1px solid rgba(27, 31, 35, .2);
+  border: none;
+  background-color: #f5f5f5;
   border-radius: 3px;
-  padding: 5px 15px;
+  padding: 11px 18px 10px;
+  font-size: 13px;
+  color: rgba(13,17,43,.8);
+  line-height: 1;
 }
 
 button:hover {
-  background-image: linear-gradient(-180deg, rgb(239, 243, 246), rgb(229, 233, 236) 90%);
-  border: 1px solid rgba(27, 31, 35, .2);
+  background-color: #e8e8e8;
 }
 
-.pure-button-primary {}
+button.primary {
+  background-color: #f22f46;
+  color: #ffffff;
+}
 
-.pure-button-primary:hover,
-.pure-button-primary:active {}
+button.primary:hover {
+  background-color: #ec0f29;
+
+}
