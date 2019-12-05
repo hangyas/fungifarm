@@ -5,7 +5,9 @@
     </div>
     <div class="body">
     <%= @clicks %>
-    <button phx-click="increase_click" phx-value-amount="1">+1</button>
+
+    <button phx-click="increase_click" phx-value-amount="1">sad button</button>
+    <button class="primary" phx-click="increase_click" phx-value-amount="10">happy button</button>
 
 
     <%= render FungifarmWeb.PageView, "graph.html", graph: @sensordata, title: "successful jobs/sec", width: 250, height: 100 %>

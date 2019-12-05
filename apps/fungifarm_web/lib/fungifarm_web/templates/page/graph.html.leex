@@ -2,6 +2,19 @@
   <style>
     .title { font-size: 30px;}
   </style>
+  
+  <defs>
+      <linearGradient id="graph-style-default" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#45969b"/>
+        <stop offset="100%" stop-color="#512c62"/>
+      </linearGradient>
+      <%# <style type="text/css"><![CDATA[
+        #rect1 { fill: url(#Gradient1); }
+        .stop1 { stop-color: red; }
+        .stop2 { stop-color: black; stop-opacity: 0; }
+        .stop3 { stop-color: blue; }
+      ]]></style> %>
+  </defs>
 
   <g transform="translate(0, 0)">
     <%# title %>
@@ -18,6 +31,26 @@
     </g>
 
     <%# data points %>
-    <polyline fill="none" stroke="red" stroke-width="2" points="<%= Graph.data_to_points(@graph, @width, @height) %>"/>
+    <path
+      fill="url(#graph-style-default)"
+      stroke="none"
+      d="<%= Graph.data_to_path(@graph, @width, @height) %>"
+    />
+
+
+
+    <%# <path d="M 10 10 C 20 20, 40 20, 50 10" stroke="black" fill="transparent"/> %>
+    <%# <polyline
+      fill="none"
+      stroke="#ff9940"
+      stroke-width="2"
+      points="0 <%=@height%> <%= Graph.data_to_points(@graph, @width, @height) %> <%=@width%> <%=@height%>"
+    /> %>
+    <%# <polygon
+      fill="url(#graph-style-default)"
+      stroke="none"
+      stroke-width="2"
+      points="0 <%=@height%> <%= Graph.data_to_points(@graph, @width, @height) %> <%=@width%> <%=@height%>"
+    /> %>
   </g>
 </svg>
