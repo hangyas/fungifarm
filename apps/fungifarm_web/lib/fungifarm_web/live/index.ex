@@ -2,6 +2,7 @@ defmodule FungifarmWeb.Live.Index do
   use Phoenix.LiveView
 
   alias Fungifarm.Database
+  alias Fungifarm.Uplink
 
   def mount(_session, socket) do
     subscribe_to_sensors()
@@ -46,8 +47,7 @@ defmodule FungifarmWeb.Live.Index do
   # private functions
 
   defp subscribe_to_sensors() do
-    PubSub.subscribe(self(), :fake_sensor_data)
-      # Application.get_env(:fungifarm, :sensors)
+    [unit] = Uplink.farmunits()
+    Uplink.subscribe(unit, :fake_sensor_data)
   end
-
 end

@@ -40,7 +40,7 @@ defmodule FarmUnit.Sensor.FakeSensor do
       }
     }
 
-    Fungifarm.DataBroker.emit(@topic, data)
+    PubSub.publish(@topic, data)
     # TODO send more metadata (unit_id, sensor name..)
   end
 

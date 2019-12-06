@@ -1,18 +1,6 @@
 defmodule FungifarmWeb.Graph do
   def data_to_points([], _width, _height), do: ""
 
-  def data_to_points(data, width, _height) do
-    point_count = length(data)
-    step = width / point_count
-
-    x_axis = Enum.map(0..point_count, &(&1 * step))
-
-    x_axis
-    |> Enum.zip(data)
-    |> Enum.flat_map(fn {x, y} -> [x, y] end)
-    |> Enum.join(",")
-  end
-
   def data_to_path(data, _width, _height) when length(data) < 2, do: ""
 
   def data_to_path(data, width, height) do

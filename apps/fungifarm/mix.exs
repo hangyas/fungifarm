@@ -38,7 +38,8 @@ defmodule Fungifarm.MixProject do
     [
       {:mongodb, ">= 0.0.0"},
       {:poolboy, ">= 0.0.0"},
-      {:pubsub, "~> 1.0"}
+      {:pubsub, "~> 1.0"},
+      {:fungifarm_shared, in_umbrella: true}
     ]
   end
 

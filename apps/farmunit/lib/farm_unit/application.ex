@@ -7,9 +7,9 @@ defmodule FarmUnit.Application do
     |> Enum.map(fn {mod, _name} -> mod end)
 
     children = [
+      PubSub
     ] ++ sensors
 
-    opts = [strategy: :one_for_one, name: FarmUnit.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: FarmUnit.Supervisor)
   end
 end
