@@ -9,13 +9,8 @@ defmodule Fungifarm.Database do
   def save(data), do: impl().save(data)
 
   @impl true
-  def current(:temperature) do
-    1
-  end
-
-  @impl true
-  def current(:humidity) do
-    1
+  def current(attr) do
+    impl().current(attr)
   end
 
   defp impl do
