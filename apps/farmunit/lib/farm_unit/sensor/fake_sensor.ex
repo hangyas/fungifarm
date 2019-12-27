@@ -3,12 +3,12 @@ defmodule FarmUnit.Sensor.FakeSensor do
 
   @behaviour Impl
 
-  @topic :fake_sensor_data
   @update_interval 1_000
 
   def child_spec(opts) do
+    [{:id, id} | _] = opts
     %{
-      id: __MODULE__,
+      id: id,
       start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: :permanent,
@@ -16,33 +16,33 @@ defmodule FarmUnit.Sensor.FakeSensor do
     }
   end
 
-  def start_link(_arg) do
-    Task.start_link(&loop/0)
+  def start_link(args) do
+    Task.start_link(__MODULE__, :loop, [args[:name]])
   end
 
-  def loop() do
+  def loop(name) do
     receive do
       # not doing anything with messages
     after
       # receive timeout
       @update_interval ->
-        emit_results()
-        loop()
+        emit_results(name)
+        loop(name)
     end
   end
 
-  defp emit_results() do
+  defp emit_results(name) do
     data = {
       :sensor_update,
       %{
-        name: "vmi",
+        name: name,
         value: :rand.uniform(100)
       }
     }
 
-    PubSub.publish(@topic, data)
+    PubSub.publish(String.to_atom(name), data)
     # TODO send more metadata (unit_id, sensor name..)
   end
 
-  def attributes(), do: [@topic]
+  def attributes(), do: [:i_have_to_rethink_this]
 end

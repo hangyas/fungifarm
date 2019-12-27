@@ -1,31 +1,56 @@
 <div class="pure-g">
-  <div class="pure-u-1-3 panel">
+
+  <div class="pure-u-1-2 panel">
     <div class="header">
-    clicker machine
+      Current Temperature
     </div>
     <div class="body">
-    <%= @clicks %>
-
-    <button phx-click="increase_click" phx-value-amount="1">sad button</button>
-    <button class="primary" phx-click="increase_click" phx-value-amount="10">happy button</button>
-
-
-    <%= render FungifarmWeb.PageView, "graph.html", graph: @sensordata, title: "successful jobs/sec", width: 250, height: 100 %>
-
-    <div>
-
-      <%= for data <- @sensordata do %>
-        <span><%= data %></span><br>
-      <% end %>
+      <div class="bigvalue">
+        <%= @current_temperature %>℃
+      </div>
     </div>
+  </div>
+
+
+  <div class="pure-u-1-2 panel">
+    <div class="header">
+      Current Humidity
+    </div>
+    <div class="body">
+      <div class="bigvalue">
+        <%= @current_humidity %>%
+      </div>
+    </div>
+  </div>
+
+  <div class="pure-u-1-2 panel">
+    <div class="header">
+      Temperature History
+    </div>
+    <div class="body">
+      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_temperature, width: 250, height: 100 %>
+    </div>
+  </div>
+
+  <div class="pure-u-1-2 panel">
+    <div class="header">
+      Humidity History
+    </div>
+    <div class="body">
+      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_humidity, width: 250, height: 100 %>
     </div>
   </div>
 
   <div class="pure-u-1-3 panel">
     <div class="header">
-    alerts
+      random test elements
     </div>
     <div class="body">
+<%= @clicks %>
+
+    <button phx-click="increase_click" phx-value-amount="1">sad button</button>
+    <button class="primary" phx-click="increase_click" phx-value-amount="10">happy button</button>
+
 
     <%= for alert <- @alerts do %>
     <%= alert %> <br>
@@ -33,3 +58,4 @@
     </div>
   </div>
 </div>
+

@@ -8,7 +8,6 @@ defmodule FungifarmWeb.Live.Index do
     subscribe_to_sensors()
 
     {:ok, alerts} = Database.get_something()
-    sensordata = []
     clicks = 0
 
     {:ok,
@@ -16,7 +15,10 @@ defmodule FungifarmWeb.Live.Index do
      |> assign(
        clicks: clicks,
        alerts: alerts,
-       sensordata: sensordata
+       history_temperature: [],
+       history_humidity: [],
+       current_temperature: Database.current(:temperature),
+       current_humidity: Database.current(:humidity)
      )}
   end
 
@@ -35,9 +37,14 @@ defmodule FungifarmWeb.Live.Index do
 
   # events from the farmunit
 
-  def handle_info({:sensor_update, %{value: value}}, socket) do
-    sensordata = Enum.take(socket.assigns.sensordata ++ [value], -10)
-    {:noreply, socket |> assign(sensordata: sensordata)}
+  def handle_info({:sensor_update, %{name: "temperature", value: value}}, socket) do
+    history_temperature = Enum.take(socket.assigns.history_temperature ++ [value], -10)
+    {:noreply, socket |> assign(history_temperature: history_temperature, current_temperature: value)}
+  end
+
+  def handle_info({:sensor_update, %{name: "humidity", value: value}}, socket) do
+    history_humidity = Enum.take(socket.assigns.history_humidity ++ [value], -10)
+    {:noreply, socket |> assign(history_humidity: history_humidity, current_humidity: value)}
   end
 
   def handle_info(_, socket) do
@@ -48,6 +55,7 @@ defmodule FungifarmWeb.Live.Index do
 
   defp subscribe_to_sensors() do
     [unit] = Uplink.farmunits()
-    Uplink.subscribe(unit, :fake_sensor_data)
+    Uplink.subscribe(unit, :temperature)
+    Uplink.subscribe(unit, :humidity)
   end
 end

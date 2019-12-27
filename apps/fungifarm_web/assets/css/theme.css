@@ -1,26 +1,34 @@
 body {
-  color: #0d112b;
+  color: #565b73;
 }
 
 .content {
-  margin: 0px 100px;
+  margin: 0px auto;
+  max-width: 1000px;
 }
 
 .panel {
   border-radius: 6px;
-  margin: 10px;
 }
 
 .panel>.header {
   padding: 10px;
-  font-size: 13px;
+  font-size: 17px;
   line-height: 20px;
-  color: #fff;
+  color: #152748;
+  border-bottom: solid 3px #e3e3e3;
+  text-transform: capitalize;
+  margin: 10px;
 }
 
 .panel>.body {
   border-top: none;
   padding: 20px;
+}
+
+.bigvalue {
+  font-size: 36px;
+  text-align: center;
 }
 
 button {

@@ -1,3 +1,3 @@
 defmodule Fungirfarm.Measurement do
-  defstruct [:sensor, :time, :attribute, :value]
+  defstruct [:time, :attribute, :value]
 end

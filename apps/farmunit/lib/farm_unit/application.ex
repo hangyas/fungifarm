@@ -4,7 +4,7 @@ defmodule FarmUnit.Application do
   def start(_type, _args) do
 
     sensors = Application.get_env(:fungifarm, :sensors)
-    |> Enum.map(fn {mod, _name} -> mod end)
+    |> Enum.map(fn {mod, args} -> {mod, args} end)
 
     children = [
       PubSub
