@@ -1,6 +1,7 @@
 defmodule FungifarmWeb.Live.Index do
   use Phoenix.LiveView
 
+  alias Fungifarm.{Sensor, Measurement}
   alias Fungifarm.Database
   alias Fungifarm.Uplink
 
@@ -37,12 +38,12 @@ defmodule FungifarmWeb.Live.Index do
 
   # events from the farmunit
 
-  def handle_info({:sensor_update, %{name: "temperature", value: value}}, socket) do
+  def handle_info({:sensor_update, %Sensor{attribute: "temperature"}, %Measurement{value: value}}, socket) do
     history_temperature = Enum.take(socket.assigns.history_temperature ++ [value], -10)
     {:noreply, socket |> assign(history_temperature: history_temperature, current_temperature: value)}
   end
 
-  def handle_info({:sensor_update, %{name: "humidity", value: value}}, socket) do
+  def handle_info({:sensor_update, %Sensor{attribute: "humidity"}, %Measurement{value: value}}, socket) do
     history_humidity = Enum.take(socket.assigns.history_humidity ++ [value], -10)
     {:noreply, socket |> assign(history_humidity: history_humidity, current_humidity: value)}
   end

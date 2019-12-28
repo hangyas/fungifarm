@@ -12,7 +12,7 @@ defmodule Fungifarm.Application do
       #     pool_size: 2,
       #     url: Application.get_env(:fungifarm, :db_url)
       #   ]
-      # TODO add database
+      Fungifarm.Database
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Fungifarm.Supervisor)

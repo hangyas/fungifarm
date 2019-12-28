@@ -1,5 +1,6 @@
 defmodule FarmUnit.Sensor.FakeSensor do
   alias FarmUnit.Sensor.Impl
+  alias Fungifarm.{Sensor, Measurement}
 
   @behaviour Impl
 
@@ -34,8 +35,13 @@ defmodule FarmUnit.Sensor.FakeSensor do
   defp emit_results(name) do
     data = {
       :sensor_update,
-      %{
-        name: name,
+      %Sensor{
+        node: "fake-node",
+        chip: __MODULE__,
+        attribute: name
+      },
+      %Measurement{
+        time: "just around nowish",
         value: :rand.uniform(100)
       }
     }
