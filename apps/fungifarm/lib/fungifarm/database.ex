@@ -2,7 +2,6 @@ defmodule Fungifarm.Database do
   alias Fungifarm.Database.Impl
   @behaviour Impl
 
-  @impl true
   def child_spec(opts), do: impl().child_spec(opts)
 
   @impl true
@@ -13,6 +12,9 @@ defmodule Fungifarm.Database do
 
   @impl true
   def current(attr), do: impl().current(attr)
+
+  @impl true
+  def get_range(attr, from, until), do: impl().get_range(attr, from, until)
 
   defp impl do
     Application.get_env(:fungifarm, :database, __MODULE__.InMemoryImpl)

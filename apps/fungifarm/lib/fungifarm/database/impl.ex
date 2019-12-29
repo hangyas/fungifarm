@@ -1,8 +1,9 @@
 defmodule Fungifarm.Database.Impl do
   alias Fungifarm.{Sensor, Measurement}
 
-  @callback child_spec(any) :: any
+  @callback save(Sensor.t, Measurement.t) :: :ok | {:error, String.t}
+  @callback current(atom) :: {:ok, Measurement.t} | {:error, String.t}
+  @callback get_range(atom, DateTime.t, DateTime.t) :: {:ok, [Measurement.t]} | {:error, String.t}
+
   @callback get_something() :: {:ok, [String.t]}
-  @callback current(atom) :: {:ok, integer}
-  @callback save(Sensor, Measurement) :: :ok | {:error, String.t}
 end
