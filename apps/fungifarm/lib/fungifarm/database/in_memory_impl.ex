@@ -22,6 +22,21 @@ defmodule Fungifarm.Database.InMemoryImpl do
   end
 
   @impl Impl
+  def min(attr, from, until) do
+    GenServer.call(__MODULE__, {:min, attr, from, until})
+  end
+
+  @impl Impl
+  def max(attr, from, until) do
+    GenServer.call(__MODULE__, {:max, attr, from, until})
+  end
+
+  @impl Impl
+  def avg(attr, from, until) do
+    GenServer.call(__MODULE__, {:avg, attr, from, until})
+  end
+
+  @impl Impl
   def save(sensor, measurement) do
     GenServer.call(__MODULE__, {:save, sensor, measurement})
   end
@@ -56,6 +71,44 @@ defmodule Fungifarm.Database.InMemoryImpl do
     end)
 
     {:reply, list, db}
+  end
+
+  @impl GenServer
+  def handle_call({:min, attr, from, until}, _from, db) do
+    min = db
+    |> Map.get(attr)
+    |> Enum.filter(fn e ->
+      DateTime.compare(e.time, from) != :lt && DateTime.compare(e.time, until) != :gt
+    end)
+    |> Enum.min_by(fn e -> e.value end)
+
+    {:reply, min, db}
+  end
+
+  @impl GenServer
+  def handle_call({:max, attr, from, until}, _from, db) do
+    max = db
+    |> Map.get(attr)
+    |> Enum.filter(fn e ->
+      DateTime.compare(e.time, from) != :lt && DateTime.compare(e.time, until) != :gt
+    end)
+    |> Enum.max_by(fn e -> e.value end)
+
+    {:reply, max, db}
+  end
+
+  @impl GenServer
+  def handle_call({:avg, attr, from, until}, _from, db) do
+    list = db
+    |> Map.get(attr)
+    |> Enum.filter(fn e ->
+      DateTime.compare(e.time, from) != :lt && DateTime.compare(e.time, until) != :gt
+    end)
+    |> Enum.map(fn e -> e.value end)
+
+    avg = Enum.sum(list) / length(list)
+
+    {:reply, avg, db}
   end
 
 end

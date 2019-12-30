@@ -41,7 +41,7 @@ defmodule FarmUnit.Sensor.FakeSensor do
         attribute: name
       },
       %Measurement{
-        time: "just around nowish",
+        time: DateTime.utc_now(),
         value: :rand.uniform(100)
       }
     }

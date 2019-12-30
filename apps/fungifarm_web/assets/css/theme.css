@@ -21,9 +21,13 @@ body {
   margin: 10px;
 }
 
-.panel>.body {
+.panel > .body {
   border-top: none;
   padding: 20px;
+}
+
+.panel > .body > .chart {
+  max-width: 100%;
 }
 
 .bigvalue {

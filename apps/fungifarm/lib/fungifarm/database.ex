@@ -16,6 +16,16 @@ defmodule Fungifarm.Database do
   @impl true
   def get_range(attr, from, until), do: impl().get_range(attr, from, until)
 
+  @impl true
+  def min(attr, from, until), do: impl().min(attr, from, until)
+
+  @impl true
+  def max(attr, from, until), do: impl().max(attr, from, until)
+
+  @impl true
+  def avg(attr, from, until), do: impl().avg(attr, from, until)
+
+
   defp impl do
     Application.get_env(:fungifarm, :database, __MODULE__.InMemoryImpl)
   end

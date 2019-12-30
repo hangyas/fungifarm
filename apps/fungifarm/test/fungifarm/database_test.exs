@@ -64,4 +64,38 @@ defmodule Fungifarm.DatabaseTest do
 
     assert read == wrote
   end
+
+  test "min" do
+    attr = gen_attr()
+
+    test_save(attr, 1)
+    test_save(attr, 2)
+    test_save(attr, 0.3)
+    test_save(attr, 3)
+
+    assert 0.3 == Database.min(attr, DateTime.utc_now() |> DateTime.add(-500), DateTime.utc_now()).value
+  end
+
+
+  test "max" do
+    attr = gen_attr()
+
+    test_save(attr, 1)
+    test_save(attr, 2)
+    test_save(attr, 0.3)
+    test_save(attr, 3)
+
+    assert 3 == Database.max(attr, DateTime.utc_now() |> DateTime.add(-500), DateTime.utc_now()).value
+  end
+
+  test "avg" do
+    attr = gen_attr()
+
+    test_save(attr, 1)
+    test_save(attr, 2)
+    test_save(attr, 0.3)
+    test_save(attr, 3)
+
+    assert 1.575 == Database.avg(attr, DateTime.utc_now() |> DateTime.add(-500), DateTime.utc_now())
+  end
 end

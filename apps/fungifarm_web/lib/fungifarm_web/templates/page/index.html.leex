@@ -28,7 +28,7 @@
       Temperature History
     </div>
     <div class="body">
-      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_temperature, width: 250, height: 100 %>
+      <%= render FungifarmWeb.PageView, "graph.html", graph: @recent_temperature, width: 500, height: 100 %>
     </div>
   </div>
 
@@ -37,7 +37,7 @@
       Humidity History
     </div>
     <div class="body">
-      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_humidity, width: 250, height: 100 %>
+      <%= render FungifarmWeb.PageView, "graph.html", graph: @recent_humidity, width: 500, height: 100 %>
     </div>
   </div>
 
@@ -46,16 +46,39 @@
       random test elements
     </div>
     <div class="body">
-<%= @clicks %>
+      <%= @clicks %>
 
-    <button phx-click="increase_click" phx-value-amount="1">sad button</button>
-    <button class="primary" phx-click="increase_click" phx-value-amount="10">happy button</button>
+      <button phx-click="increase_click" phx-value-amount="1">sad button</button>
+      <button class="primary" phx-click="increase_click" phx-value-amount="10">happy button</button>
 
-
-    <%= for alert <- @alerts do %>
-    <%= alert %> <br>
-    <% end %>
+      <%= for alert <- @alerts do %>
+      <%= alert %> <br>
+      <% end %>
     </div>
   </div>
+
+  <div class="pure-u-1-1 panel">
+    <div class="header">
+      Humidity History
+    </div>
+    <div class="body">
+      <div>
+        last: 
+        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24 %>">day</button>
+        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24*7 %>">week</button>
+        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24*30 %>">month</button>
+      </div>
+
+      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_humidity.values, width: 1500, height: 100 %>
+
+      <div>
+        <span>min: <%= @history_humidity.min.value %></span>
+        <span>max: <%= @history_humidity.max.value %></span>
+        <span>avg: <%= @history_humidity.avg %></span>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 

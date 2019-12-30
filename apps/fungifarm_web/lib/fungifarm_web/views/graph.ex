@@ -4,6 +4,7 @@ defmodule FungifarmWeb.Graph do
   def data_to_path(data, _width, _height) when length(data) < 2, do: ""
 
   def data_to_path(data, width, height) do
+    # data = Enum.map(data, fn e -> e.value end)
     point_count = length(data)
     step = width / (point_count - 1)
 
