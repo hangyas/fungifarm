@@ -29,6 +29,15 @@ defmodule FungifarmWeb.ConnCase do
   end
 
   setup _tags do
+    Fungifarm.Database.save(
+      %Fungifarm.Sensor{attribute: "humidity", chip: "test", node: "test-web"},
+      %Fungifarm.Measurement{time: DateTime.utc_now(), value: 0}
+    )
+    Fungifarm.Database.save(
+      %Fungifarm.Sensor{attribute: "temperature", chip: "test", node: "test-web"},
+      %Fungifarm.Measurement{time: DateTime.utc_now(), value: 0}
+    )
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
