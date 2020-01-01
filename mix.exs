@@ -5,7 +5,16 @@ defmodule Fungifarm.Umbrella.MixProject do
     [
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [
+        farmunit: [
+          version: "0.0.1",
+          applications: [
+            farmunit: :permanent
+          ],
+          include_erts: false
+        ]
+      ]
     ]
   end
 
