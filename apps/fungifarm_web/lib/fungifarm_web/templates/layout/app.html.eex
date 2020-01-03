@@ -24,6 +24,11 @@
         <a href="http://localhost:4000/">
           🍄 Fungifarm Monitor
         </a>
+
+        <%= live_link to: Routes.live_path(@conn, FungifarmWeb.Live.Graph, "temp") do %>
+        temp
+        <% end %>
+
       </section>
     </header>
     <div role="main" class="content">

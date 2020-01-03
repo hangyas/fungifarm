@@ -1,6 +1,8 @@
 defmodule FungifarmWeb.Router do
   use FungifarmWeb, :router
 
+  import Phoenix.LiveView.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -17,7 +19,9 @@ defmodule FungifarmWeb.Router do
   scope "/", FungifarmWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", Live.Index
+    # live "/", PageController, :index
+    live "/graph/:topic", Live.Graph
   end
 
   # Other scopes may use custom stacks.

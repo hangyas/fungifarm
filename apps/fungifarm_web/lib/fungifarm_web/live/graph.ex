@@ -1,4 +1,4 @@
-defmodule FungifarmWeb.Live.Index do
+defmodule FungifarmWeb.Live.Graph do
   use Phoenix.LiveView
 
   alias Fungifarm.{Sensor, Measurement}
