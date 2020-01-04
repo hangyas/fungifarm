@@ -12,7 +12,8 @@ defmodule Fungifarm.Umbrella.MixProject do
           applications: [
             farmunit: :permanent
           ],
-          include_erts: false
+          include_erts: false,
+          cookie: File.read!("cookie")
         ]
       ]
     ]
