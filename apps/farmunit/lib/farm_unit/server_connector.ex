@@ -1,4 +1,5 @@
 defmodule FarmUnit.ServerConnector do
+  alias Fungifarm.FarmunitRegistry
 
   def child_spec(opts) do
     %{
@@ -11,32 +12,34 @@ defmodule FarmUnit.ServerConnector do
   end
 
   def start_link(_args) do
-    Task.start_link(__MODULE__, :loop, [])
+    Task.start_link(__MODULE__, :connect, [])
   end
 
-  def loop() do
+  def connect() do
     node = Application.get_env(:farmunit, :fungifarm_node)
     case Node.connect(node) do
       false ->
         Process.sleep(2000)
-        loop()
+        connect()
       true ->
         IO.puts("Connected")
         Node.monitor(node, true)
-        read()
+        FarmunitRegistry.register(node, node(), %{})
+        monitor()
       a -> IO.inspect(a)
     end
 
   end
 
-  def read() do
+  defp monitor() do
     receive do
       {:nodedown, _} ->
         IO.puts "Connection lost. Reconnecting..."
-        loop()
+        connect()
       a ->
         IO.puts "Unkown error in ServerConnector:"
         IO.inspect(a)
+        monitor()
     end
   end
 end

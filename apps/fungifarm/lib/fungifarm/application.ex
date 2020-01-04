@@ -13,6 +13,7 @@ defmodule Fungifarm.Application do
       #     url: Application.get_env(:fungifarm, :db_url)
       #   ]
       Fungifarm.Database,
+      Fungifarm.FarmunitRegistry,
       Fungifarm.DataSink
     ]
 

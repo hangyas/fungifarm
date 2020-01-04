@@ -16,12 +16,10 @@ defmodule Fungifarm.DataSink do
   end
 
   def main() do
-    subscribe_to_sensors()
     loop()
   end
 
-  defp subscribe_to_sensors() do
-    [unit] = Uplink.farmunits()
+  def subscribe_to_sensors(unit) do
     Uplink.subscribe(unit, :temperature)
     Uplink.subscribe(unit, :humidity)
   end

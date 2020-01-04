@@ -12,9 +12,9 @@
 
 ## Connection
 
-`farmunits` connect to the `fungifarm` server (address is in the configuration), send their metadata, monitor the connection and reconnect if need be
+`farmunit`s connect to the `fungifarm` server (`FarmUnit.ServerConnector`) (address is in the configuration), send their metadata (`FarmunitRegistry.register`), monitor the connection and reconnect if need be
 
-`fungifarm` and `fungifarm_web` subscribe to the messages emitted by the `farmunit`s, might send control messages
+`fungifarm` and `fungifarm_web` subscribe to the messages emitted by the `farmunit`s, might send control messages (`Uplink`, `FarmunitRegistry`)
 
 ## TODO
 
