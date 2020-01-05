@@ -31,6 +31,11 @@ defmodule Fungifarm.FarmunitRegistry do
   end
 
   @impl true
+  def handle_call({:farmunits}, _node, registry) do
+    {:reply, registry, registry}
+  end
+
+  @impl true
   def handle_info({:nodeup, _node}, registry) do
     {:noreply, registry}
   end
@@ -43,10 +48,5 @@ defmodule Fungifarm.FarmunitRegistry do
     else
       {:noreply, registry}
     end
-  end
-
-  @impl true
-  def handle_call({:farmunits}, _node, registry) do
-    {:reply, registry, registry}
   end
 end

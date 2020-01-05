@@ -10,6 +10,7 @@ defmodule FungifarmWeb.Live.Index do
     clicks = 0
 
     report = load_report(600)
+    [unit] = Map.keys(FarmunitRegistry.farmunits())
 
     {:ok,
      socket
@@ -17,6 +18,14 @@ defmodule FungifarmWeb.Live.Index do
        clicks: clicks,
        alerts: alerts,
        recent_temperature: [],
+       humidity: %{
+         unit: unit,
+         sensor: :humidity
+       },
+       temperature: %{
+         unit: unit,
+         sensor: :temperature
+       },
        recent_humidity: [],
        current_temperature: Database.current("temperature").value,
        current_humidity: Database.current("humidity").value,
@@ -24,13 +33,14 @@ defmodule FungifarmWeb.Live.Index do
      )}
   end
 
-  def render(assigns) do
-    FungifarmWeb.PageView.render("index.html", assigns)
-  end
-
-  # needed to click live_link with the current url
+  # needed for live_link
+  # but we dont have url params
   def handle_params(_params, _uri, socket) do
     {:noreply, socket}
+  end
+
+  def render(assigns) do
+    FungifarmWeb.PageView.render("index.html", assigns)
   end
 
   # events from the ui

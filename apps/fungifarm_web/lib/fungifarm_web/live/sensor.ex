@@ -4,60 +4,40 @@ defmodule FungifarmWeb.Live.Sensor do
   alias Fungifarm.{Sensor, Measurement, Database, Database, Uplink, FarmunitRegistry}
 
   def mount(_session, socket) do
-    subscribe_to_sensors()
-
-    {:ok, alerts} = Database.get_something()
-    clicks = 0
-
-    report = load_report(600)
-
-    {:ok,
-     socket
-     |> assign(
-       clicks: clicks,
-       alerts: alerts,
-       recent_temperature: [],
-       recent_humidity: [],
-       current_temperature: Database.current("temperature").value,
-       current_humidity: Database.current("humidity").value,
-       history_humidity: report
-     )}
+    {:ok, socket}
   end
 
-  def render(assigns) do
-    FungifarmWeb.PageView.render("index.html", assigns)
-  end
+  def handle_params(_params = %{"node" => node, "name" => sensor_name}, _uri, socket) do
+    node = node |> URI.decode() |> String.to_atom()
+    sensor_name = sensor_name |> URI.decode() |> String.to_atom()
 
-  # needed to click live_link with the current url
-  def handle_params(_params, _uri, socket) do
+    subscribe_to_sensor(node, sensor_name)
+
+    metadata = FarmunitRegistry.farmunits()[node].sensors[sensor_name]
+    metadata = metadata |> Map.put(:node, node)
+
+    socket = socket |> assign(
+      metadata: metadata,
+      sensor_name: sensor_name,
+      current_value: 0,
+      data: []
+    )
+
     {:noreply, socket}
   end
 
+  def render(assigns) do
+    FungifarmWeb.PageView.render("sensor.html", assigns)
+  end
+
+
   # events from the ui
-
-  def handle_event("increase_click", %{"amount" => amount} = _values, socket) do
-    {amount, ""} = Integer.parse(amount)
-
-    clicks = socket.assigns.clicks + amount
-    {:noreply, socket |> assign(clicks: clicks)}
-  end
-
-  def handle_event("set_interval", %{"seconds" => seconds}, socket) do
-    {seconds, ""} = Integer.parse(seconds)
-
-    {:noreply, socket |> assign(history_humidity: load_report(seconds))}
-  end
 
   # events from the farmunit
 
-  def handle_info({:sensor_update, %Sensor{attribute: "temperature"}, %Measurement{value: value}}, socket) do
-    recent_temperature = Enum.take(socket.assigns.recent_temperature ++ [value], -10)
-    {:noreply, socket |> assign(recent_temperature: recent_temperature, current_temperature: value)}
-  end
-
-  def handle_info({:sensor_update, %Sensor{attribute: "humidity"}, %Measurement{value: value}}, socket) do
-    recent_humidity = Enum.take(socket.assigns.recent_humidity ++ [value], -10)
-    {:noreply, socket |> assign(recent_humidity: recent_humidity, current_humidity: value)}
+  def handle_info({:sensor_update, _sensor = %Sensor{}, %Measurement{value: value}}, socket) do
+    data = Enum.take(socket.assigns.data ++ [value], -10)
+    {:noreply, socket |> assign(data: data, current_value: value)}
   end
 
   def handle_info(_, socket) do
@@ -66,10 +46,8 @@ defmodule FungifarmWeb.Live.Sensor do
 
   # private functions
 
-  defp subscribe_to_sensors() do
-    [unit] = Map.keys(FarmunitRegistry.farmunits())
-    Uplink.subscribe(unit, :temperature)
-    Uplink.subscribe(unit, :humidity)
+  defp subscribe_to_sensor(unit, sensor_name) do
+    Uplink.subscribe(unit, sensor_name)
   end
 
   defp load_report(seconds) do

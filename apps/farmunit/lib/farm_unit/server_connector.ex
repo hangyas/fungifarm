@@ -24,7 +24,7 @@ defmodule FarmUnit.ServerConnector do
       true ->
         IO.puts("Connected")
         Node.monitor(node, true)
-        FarmunitRegistry.register(node, node(), %{})
+        FarmunitRegistry.register(node, node(), FarmUnit.metadata())
         monitor()
       a -> IO.inspect(a)
     end

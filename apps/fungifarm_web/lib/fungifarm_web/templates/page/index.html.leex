@@ -9,7 +9,7 @@
         <%= @current_temperature %>℃
       </div>
       <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_temperature, width: 500, height: 100 %>
-      <%= live_link "asd", to: Routes.live_path(@socket, FungifarmWeb.Live.Graph, "temp") %>
+      <%= live_link "detailed view", to: Routes.live_path(@socket, FungifarmWeb.Live.Sensor, @temperature.unit, @temperature.sensor) %>
     </div>
   </div>
 
@@ -22,6 +22,7 @@
         <%= @current_humidity %>%
       </div>
       <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_humidity, width: 500, height: 100 %>
+      <%= live_link "detailed view", to: Routes.live_path(@socket, FungifarmWeb.Live.Sensor, @humidity.unit, @humidity.sensor) %>
     </div>
   </div>
 

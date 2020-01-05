@@ -20,8 +20,7 @@ defmodule FungifarmWeb.Router do
     pipe_through :browser
 
     live "/", Live.Index
-    # live "/", PageController, :index
-    live "/graph/:topic", Live.Graph
+    live "/sensor/:node/:name", Live.Sensor
   end
 
   # Other scopes may use custom stacks.

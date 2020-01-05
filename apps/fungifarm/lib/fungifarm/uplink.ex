@@ -6,7 +6,6 @@ defmodule Fungifarm.Uplink do
   # end
 
   def subscribe(node, topic, pid \\ self()) do
-    Node.connect node
     GenServer.cast({PubSub, node}, {:subscribe, %{topic: topic, pid: pid}})
   end
 

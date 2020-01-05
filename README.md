@@ -1,5 +1,11 @@
 # Fungifarm
 
+## Run
+
+```
+iex --name fungifarm@192.168.1.11 --cookie (cat cookie) -S mix phx.server
+```
+
 ## Apps
 
 **farmunit:** application running on the raspberry, sensors and basic automation control
