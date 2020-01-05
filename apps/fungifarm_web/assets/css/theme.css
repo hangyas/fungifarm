@@ -33,6 +33,7 @@ body {
 .bigvalue {
   font-size: 36px;
   text-align: center;
+  margin-bottom: 40px;
 }
 
 button {

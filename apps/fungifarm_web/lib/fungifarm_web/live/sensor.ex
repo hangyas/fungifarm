@@ -1,9 +1,7 @@
-defmodule FungifarmWeb.Live.Graph do
+defmodule FungifarmWeb.Live.Sensor do
   use Phoenix.LiveView
 
-  alias Fungifarm.{Sensor, Measurement}
-  alias Fungifarm.Database
-  alias Fungifarm.Uplink
+  alias Fungifarm.{Sensor, Measurement, Database, Database, Uplink, FarmunitRegistry}
 
   def mount(_session, socket) do
     subscribe_to_sensors()
@@ -69,7 +67,7 @@ defmodule FungifarmWeb.Live.Graph do
   # private functions
 
   defp subscribe_to_sensors() do
-    [unit] = Uplink.farmunits()
+    [unit] = Map.keys(FarmunitRegistry.farmunits())
     Uplink.subscribe(unit, :temperature)
     Uplink.subscribe(unit, :humidity)
   end

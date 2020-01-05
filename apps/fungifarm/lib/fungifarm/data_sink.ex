@@ -12,23 +12,31 @@ defmodule Fungifarm.DataSink do
   end
 
   def start_link(_args) do
-    Task.start_link(__MODULE__, :main, [])
+    {:ok, pid} = Task.start_link(__MODULE__, :main, [])
+    Process.register(pid, __MODULE__)
+    {:ok, pid}
   end
 
   def main() do
     loop()
   end
 
-  def subscribe_to_sensors(unit) do
-    Uplink.subscribe(unit, :temperature)
-    Uplink.subscribe(unit, :humidity)
+  def register(node) do
+    send(__MODULE__, {:register, node})
   end
 
   defp loop() do
     receive do
+      {:register, node} -> subscribe_to_sensors(node)
       {:sensor_update, sensor, measurement} -> handle_sensor_update(sensor, measurement)
     end
     loop()
+  end
+
+  defp subscribe_to_sensors(unit) do
+    # TODO subscribe based on metadata
+    Uplink.subscribe(unit, :temperature)
+    Uplink.subscribe(unit, :humidity)
   end
 
   defp handle_sensor_update(sensor, measurement) do

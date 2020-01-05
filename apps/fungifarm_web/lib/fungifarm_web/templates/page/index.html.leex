@@ -2,42 +2,26 @@
 
   <div class="pure-u-1-2 panel">
     <div class="header">
-      Current Temperature
+      Temperature
     </div>
     <div class="body">
       <div class="bigvalue">
         <%= @current_temperature %>℃
       </div>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_temperature, width: 500, height: 100 %>
+      <%= live_link "asd", to: Routes.live_path(@socket, FungifarmWeb.Live.Graph, "temp") %>
     </div>
   </div>
 
-
   <div class="pure-u-1-2 panel">
     <div class="header">
-      Current Humidity
+      Humidity
     </div>
     <div class="body">
       <div class="bigvalue">
         <%= @current_humidity %>%
       </div>
-    </div>
-  </div>
-
-  <div class="pure-u-1-2 panel">
-    <div class="header">
-      Temperature History
-    </div>
-    <div class="body">
-      <%= render FungifarmWeb.PageView, "graph.html", graph: @recent_temperature, width: 500, height: 100 %>
-    </div>
-  </div>
-
-  <div class="pure-u-1-2 panel">
-    <div class="header">
-      Humidity History
-    </div>
-    <div class="body">
-      <%= render FungifarmWeb.PageView, "graph.html", graph: @recent_humidity, width: 500, height: 100 %>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_humidity, width: 500, height: 100 %>
     </div>
   </div>
 
@@ -69,7 +53,7 @@
         <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24*30 %>">month</button>
       </div>
 
-      <%= render FungifarmWeb.PageView, "graph.html", graph: @history_humidity.values, width: 1500, height: 100 %>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @history_humidity.values, width: 1500, height: 100 %>
 
       <div>
         <span>min: <%= @history_humidity.min.value %></span>

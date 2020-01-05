@@ -1,7 +1,7 @@
 defmodule Fungifarm.FarmunitRegistry do
   use GenServer
 
-  alias Fungifarm.{Database, Uplink}
+  alias Fungifarm.{Database, Uplink, DataSink}
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, [{:name, __MODULE__}])
@@ -26,6 +26,7 @@ defmodule Fungifarm.FarmunitRegistry do
   @impl true
   def handle_cast({:register, node, metadata}, registry) do
     registry = Map.put(registry, node, metadata)
+    DataSink.register(node)
     {:noreply, registry}
   end
 

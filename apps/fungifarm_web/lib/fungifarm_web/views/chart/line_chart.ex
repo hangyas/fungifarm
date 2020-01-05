@@ -1,4 +1,4 @@
-defmodule FungifarmWeb.Graph do
+defmodule FungifarmWeb.Chart.LineChart do
   def data_to_points([], _width, _height), do: ""
 
   def data_to_path(data, _width, _height) when length(data) < 2, do: ""

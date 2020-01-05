@@ -5,7 +5,7 @@ defmodule Fungifarm.Database.InMemoryImpl do
   @behaviour Impl
 
   def start_link(_) do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{"humidity" => [], "temperature" => []}, name: __MODULE__)
   end
 
   @impl Impl
