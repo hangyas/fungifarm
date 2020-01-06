@@ -16,9 +16,10 @@
       Metadata
     </div>
     <div class="body">
-      <ul>
-        <li><b>node:</b> <%= @metadata.node %></li>
-        <li><b>name:</b> <%= @sensor_name %></li>
+      <ul class="key-value-pairs">
+        <%= for {k, v} <- @metadata do %>
+          <li><b><%= k %>:</b> <%= v %></li>
+        <% end %>
       </ul>
     </div>
   </div>
