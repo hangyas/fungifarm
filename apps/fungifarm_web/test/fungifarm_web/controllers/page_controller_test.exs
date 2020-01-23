@@ -3,6 +3,6 @@ defmodule FungifarmWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")
-    assert html_response(conn, 200) =~ "Fungifarm Monitor"
+    assert html_response(conn, 302) =~ "/no-nodes"
   end
 end

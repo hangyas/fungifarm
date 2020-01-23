@@ -4,39 +4,47 @@ defmodule FungifarmWeb.Live.Index do
   alias Fungifarm.{Sensor, Measurement, Database, Database, Uplink, FarmunitRegistry}
 
   def mount(_session, socket) do
-    subscribe_to_sensors()
+    with [unit] <- Map.keys(FarmunitRegistry.farmunits()) do
+      subscribe_to_sensors(unit)
 
-    {:ok, alerts} = Database.get_something()
-    clicks = 0
+      {:ok, alerts} = Database.get_something()
+      clicks = 0
 
-    report = load_report(600)
-    [unit] = Map.keys(FarmunitRegistry.farmunits())
+      report = load_report(600)
+      [unit] = Map.keys(FarmunitRegistry.farmunits())
 
-    {:ok,
-     socket
-     |> assign(
-       clicks: clicks,
-       alerts: alerts,
-       recent_temperature: [],
-       humidity: %{
-         unit: unit,
-         sensor: :humidity
-       },
-       temperature: %{
-         unit: unit,
-         sensor: :temperature
-       },
-       recent_humidity: [],
-       current_temperature: Database.current("temperature").value,
-       current_humidity: Database.current("humidity").value,
-       history_humidity: report
-     )}
+      {:ok,
+      socket
+      |> assign(
+        unit: unit,
+        clicks: clicks,
+        alerts: alerts,
+        recent_temperature: [],
+        humidity: %{
+          unit: unit,
+          sensor: :humidity
+        },
+        temperature: %{
+          unit: unit,
+          sensor: :temperature
+        },
+        recent_humidity: [],
+        current_temperature: Database.current("temperature").value,
+        current_humidity: Database.current("humidity").value,
+        history_humidity: report
+      )}
+    else
+      [] -> {:ok, socket |> assign(unit: nil)}
+    end
   end
 
-  # needed for live_link
-  # but we dont have url params
+  # needed for live_link as well
   def handle_params(_params, _uri, socket) do
-    {:noreply, socket}
+    if socket.assigns.unit == nil do
+      {:noreply, socket  |> live_redirect(to: "/no-nodes")}
+    else
+      {:noreply, socket}
+    end
   end
 
   def render(assigns) do
@@ -76,8 +84,7 @@ defmodule FungifarmWeb.Live.Index do
 
   # private functions
 
-  defp subscribe_to_sensors() do
-    [unit] = Map.keys(FarmunitRegistry.farmunits())
+  defp subscribe_to_sensors(unit) do
     Uplink.subscribe(unit, :temperature)
     Uplink.subscribe(unit, :humidity)
   end

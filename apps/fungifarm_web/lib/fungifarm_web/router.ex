@@ -20,6 +20,7 @@ defmodule FungifarmWeb.Router do
     pipe_through :browser
 
     live "/", Live.Index
+    live "/no-nodes", Live.NoNodes
     live "/sensor/:node/:name", Live.Sensor
   end
 
