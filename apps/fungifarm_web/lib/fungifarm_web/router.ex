@@ -22,6 +22,7 @@ defmodule FungifarmWeb.Router do
     live "/", Live.Index
     live "/no-nodes", Live.NoNodes
     live "/sensor/:node/:name", Live.Sensor
+    live "/sensor-history/:name", Live.SensorHistory
   end
 
   # Other scopes may use custom stacks.
