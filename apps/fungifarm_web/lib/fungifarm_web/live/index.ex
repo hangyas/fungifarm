@@ -7,7 +7,6 @@ defmodule FungifarmWeb.Live.Index do
     with [unit] <- Map.keys(FarmunitRegistry.farmunits()) do
       subscribe_to_sensors(unit)
 
-      {:ok, alerts} = Database.get_something()
       clicks = 0
 
       report = load_report(600)
@@ -18,7 +17,6 @@ defmodule FungifarmWeb.Live.Index do
       |> assign(
         unit: unit,
         clicks: clicks,
-        alerts: alerts,
         recent_temperature: [],
         humidity: %{
           unit: unit,

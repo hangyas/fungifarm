@@ -25,8 +25,7 @@ defmodule Fungifarm.Database do
   @impl true
   def avg(attr, from, until), do: impl().avg(attr, from, until)
 
-
   defp impl do
-    Application.get_env(:fungifarm, :database, __MODULE__.InMemoryImpl)
+    Application.get_env(:fungifarm, :database, Application.get_env(:fungifarm, :db_impl))
   end
 end
