@@ -8,7 +8,7 @@ defmodule Fungifarm.FarmunitRegistry do
   end
 
   def register(server_node, node, metadata) do
-    GenServer.cast({__MODULE__, server_node}, {:register, node, metadata})
+    GenServer.call({__MODULE__, server_node}, {:register, node, metadata})
   end
 
   def farmunits() do
@@ -24,10 +24,10 @@ defmodule Fungifarm.FarmunitRegistry do
   end
 
   @impl true
-  def handle_cast({:register, node, metadata}, registry) do
+  def handle_call({:register, node, metadata}, _from, registry) do
     registry = Map.put(registry, node, metadata)
     DataSink.register(node)
-    {:noreply, registry}
+    {:reply, :ok, registry}
   end
 
   @impl true

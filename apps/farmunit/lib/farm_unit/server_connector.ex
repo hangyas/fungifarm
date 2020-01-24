@@ -17,27 +17,35 @@ defmodule FarmUnit.ServerConnector do
 
   def connect() do
     node = Application.get_env(:farmunit, :fungifarm_node)
-    case Node.connect(node) do
-      false ->
+
+    try do
+      with true <- Node.connect(node),
+           true <- Node.monitor(node, true),
+           :ok <- FarmunitRegistry.register(node, node(), FarmUnit.metadata()) do
+        IO.puts("Connected")
+        monitor()
+      else
+        # node couldn't connect
+        _ ->
+          Process.sleep(2000)
+          connect()
+      end
+    catch
+      :exit, _ ->
+        # node connected, but the application isn't running yet
         Process.sleep(2000)
         connect()
-      true ->
-        IO.puts("Connected")
-        Node.monitor(node, true)
-        FarmunitRegistry.register(node, node(), FarmUnit.metadata())
-        monitor()
-      a -> IO.inspect(a)
     end
-
   end
 
   defp monitor() do
     receive do
       {:nodedown, _} ->
-        IO.puts "Connection lost. Reconnecting..."
+        IO.puts("Connection lost. Reconnecting...")
         connect()
+
       a ->
-        IO.puts "Unkown error in ServerConnector:"
+        IO.puts("Unkown error in ServerConnector:")
         IO.inspect(a)
         monitor()
     end

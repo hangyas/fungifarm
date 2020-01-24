@@ -28,6 +28,7 @@ defmodule FarmUnit.Sensor.CommandSensor do
       # receive timeout
       @update_interval ->
         data = run_command(command)
+        # TODO do this dynamically based on the json
         emit_results("temperature", data["temperature"])
         emit_results("humidity", data["humidity"])
         loop(command)
