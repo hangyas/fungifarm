@@ -1,15 +1,23 @@
 defmodule FungifarmWeb.Chart.LineChart do
+  @default_scale %{
+    bottom: 0,
+    top: 100
+  }
+
   def data_to_points([], _width, _height), do: ""
 
-  def data_to_path(data, _width, _height) when length(data) < 2, do: ""
+  def data_to_path(data, width, height, scale \\ @default_scale)
 
-  def data_to_path(data, width, height) do
+  def data_to_path(data, _width, _height, _scale) when length(data) < 2, do: ""
+
+  def data_to_path(data, width, height, scale) do
     # data = Enum.map(data, fn e -> e.value end)
     point_count = length(data)
     step = width / (point_count - 1)
 
     x_axis = Enum.map(0..point_count, &(&1 * step)) # point on the x-axis to use
-
+    data = Enum.map(data, fn p -> move_data_to_scale(p, height, scale) end)
+    IO.inspect(data)
     data = Enum.zip(x_axis, data)
 
     [first] = Enum.take(data, 1)
@@ -35,5 +43,9 @@ defmodule FungifarmWeb.Chart.LineChart do
     r_bottom = " #{width} #{height} #{width} #{height} #{width} #{height} 0 #{height} 0 #{height} 0 #{height}"
 
     r_begin <> r <> r_end <> r_bottom
+  end
+
+  defp move_data_to_scale(data_point, height, scale) do
+    (scale.top - data_point) * (height / (scale.top - scale.bottom))
   end
 end
