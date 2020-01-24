@@ -9,7 +9,8 @@ defmodule FungifarmWeb.Live.Index do
 
       clicks = 0
 
-      report = load_report(600)
+      humidity_report = load_report("humidity", 12 * 60 * 60)
+      temperature_report = load_report("temperature", 12 * 60 * 60)
       [unit] = Map.keys(FarmunitRegistry.farmunits())
 
       {:ok,
@@ -17,6 +18,7 @@ defmodule FungifarmWeb.Live.Index do
       |> assign(
         unit: unit,
         clicks: clicks,
+        recent_humidity: [],
         recent_temperature: [],
         humidity: %{
           unit: unit,
@@ -26,10 +28,10 @@ defmodule FungifarmWeb.Live.Index do
           unit: unit,
           sensor: :temperature
         },
-        recent_humidity: [],
         current_temperature: Database.current("temperature").value,
         current_humidity: Database.current("humidity").value,
-        history_humidity: report
+        humidity_report: humidity_report,
+        temperature_report: temperature_report
       )}
     else
       [] -> {:ok, socket |> assign(unit: nil)}
@@ -58,10 +60,16 @@ defmodule FungifarmWeb.Live.Index do
     {:noreply, socket |> assign(clicks: clicks)}
   end
 
-  def handle_event("set_interval", %{"seconds" => seconds}, socket) do
+  def handle_event("set_interval", %{"attr" => "humidity", "seconds" => seconds}, socket) do
     {seconds, ""} = Integer.parse(seconds)
 
-    {:noreply, socket |> assign(history_humidity: load_report(seconds))}
+    {:noreply, socket |> assign(humidity_report: load_report("humidity", seconds))}
+  end
+
+  def handle_event("set_interval", %{"attr" => "temperature", "seconds" => seconds}, socket) do
+    {seconds, ""} = Integer.parse(seconds)
+
+    {:noreply, socket |> assign(humidity_report: load_report("temperature", seconds))}
   end
 
   # events from the farmunit
@@ -87,15 +95,15 @@ defmodule FungifarmWeb.Live.Index do
     Uplink.subscribe(unit, :humidity)
   end
 
-  defp load_report(seconds) do
+  defp load_report(attr, seconds) do
     from = (DateTime.utc_now() |> DateTime.add(-seconds))
     until = DateTime.utc_now()
 
     %{
-      values: Database.get_range("humidity", from, until) |> Enum.map(fn e -> e.value end),
-      min: Database.min("humidity", from, until),
-      max: Database.max("humidity", from, until),
-      avg: Database.avg("humidity", from, until)
+      values: Database.get_range(attr, from, until) |> Enum.map(fn e -> e.value end),
+      min: Database.min(attr, from, until),
+      max: Database.max(attr, from, until),
+      avg: Database.avg(attr, from, until)
     }
   end
 end

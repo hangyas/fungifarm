@@ -8,7 +8,7 @@
       <div class="bigvalue">
         <%= @current_temperature %>℃
       </div>
-      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_temperature, width: 500, height: 100 %>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_temperature, width: 500, height: 100, scale: %{bottom: 15, top: 25} %>
       <%= live_link "detailed view", to: Routes.live_path(@socket, FungifarmWeb.Live.Sensor, @temperature.unit, @temperature.sensor) %>
     </div>
   </div>
@@ -21,7 +21,7 @@
       <div class="bigvalue">
         <%= @current_humidity %>%
       </div>
-      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_humidity, width: 500, height: 100 %>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @recent_humidity, width: 500, height: 100, scale: %{bottom: 35, top: 75} %>
       <%= live_link "detailed view", to: Routes.live_path(@socket, FungifarmWeb.Live.Sensor, @humidity.unit, @humidity.sensor) %>
     </div>
   </div>
@@ -41,22 +41,45 @@
 
   <div class="pure-u-1-1 panel">
     <div class="header">
+      Temperature History
+    </div>
+    <div class="body">
+      <div>
+        last: 
+        <button phx-click="set_interval" phx-value-attr="temperature" phx-value-seconds="<%= 60*60*24 %>">day</button>
+        <button phx-click="set_interval" phx-value-attr="temperature" phx-value-seconds="<%= 60*60*24*7 %>">week</button>
+        <button phx-click="set_interval" phx-value-attr="temperature" phx-value-seconds="<%= 60*60*24*30 %>">month</button>
+      </div>
+
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @temperature_report.values, width: 1500, height: 100, scale: %{bottom: @temperature_report.min.value, top: @temperature_report.max.value} %>
+
+      <div>
+        <span>min: <%= @temperature_report.min.value %></span>
+        <span>max: <%= @temperature_report.max.value %></span>
+        <span>avg: <%= @temperature_report.avg %></span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pure-u-1-1 panel">
+    <div class="header">
       Humidity History
     </div>
     <div class="body">
       <div>
         last: 
-        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24 %>">day</button>
-        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24*7 %>">week</button>
-        <button phx-click="set_interval" phx-value-seconds="<%= 60*60*24*30 %>">month</button>
+        <button phx-click="set_interval" phx-value-attr="humidity" phx-value-seconds="<%= 60*60*24 %>">day</button>
+        <button phx-click="set_interval" phx-value-attr="humidity" phx-value-seconds="<%= 60*60*24*7 %>">week</button>
+        <button phx-click="set_interval" phx-value-attr="humidity" phx-value-seconds="<%= 60*60*24*30 %>">month</button>
       </div>
 
-      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @history_humidity.values, width: 1500, height: 100 %>
+      <%= render FungifarmWeb.ChartView, "line_chart.html", data: @humidity_report.values, width: 1500, height: 100, scale: %{bottom: @humidity_report.min.value, top: @humidity_report.max.value} %>
 
       <div>
-        <span>min: <%= @history_humidity.min.value %></span>
-        <span>max: <%= @history_humidity.max.value %></span>
-        <span>avg: <%= @history_humidity.avg %></span>
+        <span>min: <%= @humidity_report.min.value %></span>
+        <span>max: <%= @humidity_report.max.value %></span>
+        <span>avg: <%= @humidity_report.avg %></span>
       </div>
 
     </div>

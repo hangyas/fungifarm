@@ -17,7 +17,6 @@ defmodule FungifarmWeb.Chart.LineChart do
 
     x_axis = Enum.map(0..point_count, &(&1 * step)) # point on the x-axis to use
     data = Enum.map(data, fn p -> move_data_to_scale(p, height, scale) end)
-    IO.inspect(data)
     data = Enum.zip(x_axis, data)
 
     [first] = Enum.take(data, 1)
