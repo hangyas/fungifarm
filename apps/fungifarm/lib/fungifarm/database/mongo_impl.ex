@@ -4,6 +4,7 @@ defmodule Fungifarm.Database.MongoImpl do
 
   @db :mongo
   @collection_prefix Application.get_env(:fungifarm, :collection_prefix)
+  @readonly Application.get_env(:fungifarm, :readonly, false)
 
   def child_spec(opts) do
     %{
@@ -39,7 +40,9 @@ defmodule Fungifarm.Database.MongoImpl do
 
   @impl true
   def save(sensor, measurement) do
-    Mongo.insert_one(@db, @collection_prefix <> "_" <> sensor.attribute, measurement)
+    unless @readonly do
+      Mongo.insert_one(@db, @collection_prefix <> "_" <> sensor.attribute, measurement)
+    end
   end
 
   @impl true
@@ -63,13 +66,13 @@ defmodule Fungifarm.Database.MongoImpl do
 
   @impl true
   def min(attr, from, until) do
-    [min] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: -1}, limit: 1) |> Enum.to_list
+    [min] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: 1}, limit: 1) |> Enum.to_list
     with_atom_keys(min)
   end
 
   @impl true
   def max(attr, from, until) do
-    [max] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: 1}, limit: 1) |> Enum.to_list
+    [max] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: -1}, limit: 1) |> Enum.to_list
     with_atom_keys(max)
   end
 
