@@ -14,6 +14,17 @@ defmodule Fungifarm.Umbrella.MixProject do
           ],
           include_erts: false,
           cookie: File.read!("cookie")
+        ],
+        fat_farmunit: [
+          version: "0.0.1",
+          applications: [
+            farmunit: :permanent,
+            fungifarm: :permanent,
+            fungifarm_web: :permanent,
+            fungifarm_shared: :permanent
+          ],
+          include_erts: false,
+          cookie: File.read!("cookie")
         ]
       ]
     ]
