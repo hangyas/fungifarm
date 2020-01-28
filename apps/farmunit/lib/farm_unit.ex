@@ -1,5 +1,4 @@
 defmodule FarmUnit do
-
   def metadata() do
     %{
       node: node(),
@@ -16,5 +15,4 @@ defmodule FarmUnit do
       }
     }
   end
-
 end

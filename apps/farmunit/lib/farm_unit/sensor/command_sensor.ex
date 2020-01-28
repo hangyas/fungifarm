@@ -8,6 +8,7 @@ defmodule FarmUnit.Sensor.CommandSensor do
 
   def child_spec(opts) do
     [{:id, id} | _] = opts
+
     %{
       id: id,
       start: {__MODULE__, :start_link, [opts]},
