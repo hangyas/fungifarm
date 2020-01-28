@@ -47,7 +47,7 @@ defmodule Fungifarm.Database.MongoImpl do
 
   @impl true
   def current(attr) do
-    [current] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{time: 1}, limit: 1) |> Enum.to_list
+    [current] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{time: -1}, limit: 1) |> Enum.to_list
     with_atom_keys(current)
   end
 
