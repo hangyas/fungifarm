@@ -12,9 +12,10 @@ defmodule Fungifarm.Application do
       #     pool_size: 2,
       #     url: Application.get_env(:fungifarm, :db_url)
       #   ]
-      Fungifarm.Database,
-      Fungifarm.FarmunitRegistry,
-      Fungifarm.DataSink
+      # Fungifarm.Database,
+      # Fungifarm.FarmunitRegistry,
+      # Uplink.Satelite
+      Uplink.Satelite
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Fungifarm.Supervisor)

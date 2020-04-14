@@ -1,46 +1,45 @@
 defmodule Fungifarm.DataSink do
   alias Fungifarm.{Database, Uplink}
 
-  def child_spec(opts) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [opts]},
-      type: :worker,
-      restart: :permanent,
-      shutdown: 500
-    }
+  # Database.save(sensor, measurement)
+
+  def start_link(pullet_proc_name) do
+    Task.start_link(__MODULE__, :main, [pullet_proc_name])
   end
 
-  def start_link(_args) do
-    {:ok, pid} = Task.start_link(__MODULE__, :main, [])
-    Process.register(pid, __MODULE__)
-    {:ok, pid}
+  def main(pullet_proc_name) do
+    # waits for syn
+    pullet = get_pid(pullet_proc_name)
+
+    Process.monitor(pullet)
+
+    loop(pullet)
   end
 
-  def main() do
-    loop()
-  end
+  defp loop(pullet) do
+    PulletMQ.request(pullet)
 
-  def register(node) do
-    send(__MODULE__, {:register, node})
-  end
-
-  defp loop() do
     receive do
-      {:register, node} -> subscribe_to_sensors(node)
-      {:sensor_update, sensor, measurement} -> handle_sensor_update(sensor, measurement)
+      {:item, item} ->
+        IO.inspect(item)
+        loop(pullet)
+
+      {:DOWN, _, :process, _, :noconnection} ->
+        IO.puts("datasink stopped")
+
+      error ->
+        IO.inspect(error)
     end
-    loop()
   end
 
-  defp subscribe_to_sensors(unit) do
-    # TODO subscribe based on metadata
-    Uplink.subscribe(unit, :temperature)
-    Uplink.subscribe(unit, :humidity)
-  end
+  defp get_pid(name) do
+    pid = :syn.whereis(name)
 
-  defp handle_sensor_update(sensor, measurement) do
-    Database.save(sensor, measurement)
+    if pid == :undefined do
+      Process.sleep(500) # TODO this probably isnt the best solution
+      get_pid(name)
+    else
+      pid
+    end
   end
-
 end

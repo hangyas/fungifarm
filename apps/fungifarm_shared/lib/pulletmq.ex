@@ -1,9 +1,15 @@
 defmodule PulletMQ do
-  @doc ~S"""
+  @moduledoc ~S"""
   Minimalistic, persistent, deliver at-most-once message queue for durable network communicaiton
 
   Messages are queued on the sender, the receiver requests the first element and receives it
   as soon as it's available
+
+  Required options:
+    - queue_id
+    - data_dir
+  Optional:
+    - process_name name to be registered on syn
   """
 
   use GenServer
@@ -116,7 +122,7 @@ defmodule PulletMQ do
   defp pop_request(requests) do
     [req | tail] = requests
 
-    if Process.alive?(req) do
+    if :rpc.call(node(req), Process, :alive?, [ req ]) do
       {req, tail}
     else
       pop_request(tail)
