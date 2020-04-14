@@ -16,15 +16,24 @@ defmodule PulletMQ do
 
   @doc ~S"""
   Required options:
-   - queue_id
-   - data_dir
+    - queue_id
+    - data_dir
+  Optional:
+    - process_name name to be registered on syn
   """
   def start_link(opts) do
     state =
       @initial_state
       |> Map.put(:config, Map.new(opts))
 
-    GenServer.start_link(__MODULE__, state, name: opts[:queue_id])
+    with {:ok, pid} <- GenServer.start_link(__MODULE__, state, name: opts[:queue_id]) do
+      if state.config[:process_name] != nil do
+        :syn.register(state.config[:process_name], pid)
+      end
+      {:ok, pid}
+    else
+      error -> error
+    end
   end
 
   # -- frontend --

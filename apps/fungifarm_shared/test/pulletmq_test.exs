@@ -24,12 +24,12 @@ defmodule PulletMQTest do
   end
 
   test "more than one instance can be started" do
-    assert {:ok, pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_multiple_q1)
-    assert {:ok, pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_multiple_q2)
+    assert {:ok, _pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_multiple_q1)
+    assert {:ok, _pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_multiple_q2)
   end
 
   test "can't create more then one instance with tha same id" do
-    assert {:ok, pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_no_multiple)
+    assert {:ok, _pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_no_multiple)
     assert {:error, {:already_started, _pid}} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_no_multiple)
   end
 
@@ -78,5 +78,10 @@ defmodule PulletMQTest do
     PulletMQ.request(pullet, self())
 
     assert_receive {:item, :item}
+  end
+
+  test "registers syn name" do
+    {:ok, pullet} = PulletMQ.start_link(data_dir: mktemp(), queue_id: :test_syn, process_name: PulletMQTest.TestSyn)
+    assert ^pullet = :syn.whereis(PulletMQTest.TestSyn)
   end
 end
