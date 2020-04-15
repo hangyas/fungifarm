@@ -58,5 +58,6 @@ _build/prod/rel/fat_farmunit/bin/fat_farmunit remote
  - [x] https://github.com/ostinelli/syn
  - [ ] https://github.com/keathley/vapor/
  - [ ] option to share db between PulletMQ instances
- - [ ] [add web base observer](https://github.com/zorbash/observer_live)
+ - [ ] [add web based observer](https://github.com/zorbash/observer_live)
  - [ ] maybe pipe messages from PubSub right into PulletMQ
+ - [ ] use syn groups for PubSub?
