@@ -25,6 +25,7 @@ defmodule FungifarmShared.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # {:cubdb, "~> 1.0.0-rc.1"},
       {:cubq, "~> 0.2.0"},
       {:syn, "~> 2.1"}
     ]

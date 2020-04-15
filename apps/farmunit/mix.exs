@@ -26,7 +26,7 @@ defmodule FarmUnit.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:cubdb, "~> 0.17.0"},
+      # {:cubdb, "~> 1.0.0-rc.1"},
       {:pubsub, "~> 1.0"},
       {:json, "~> 1.3"},
       {:fungifarm_shared, in_umbrella: true}
