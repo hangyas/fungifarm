@@ -66,8 +66,8 @@ defmodule PulletMQ do
   # -- backend --
 
   def init(state) do
-    # if any of these dies, the full queue will die, which is fine for now
-    {:ok, cub_db} = CubDB.start_link(data_dir: state.config.data_dir)
+    # if any of these dies, the queue will die, which is fine for now
+    {:ok, cub_db} = CubDB.start_link(data_dir: state.config.data_dir, auto_compact: true, auto_file_sync: true)
     {:ok, cub_q} = CubQ.start_link(db: cub_db, queue: state.config.queue_id)
 
     state =
