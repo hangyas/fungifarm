@@ -1,16 +1,11 @@
 defmodule FarmUnit.Sensor.FakeSensor do
-  alias FarmUnit.Sensor.Impl
-  alias Fungifarm.{Sensor, Measurement}
-
-  @behaviour Impl
+  alias Fungifarm.Measurement
 
   @update_interval 1_000
 
   def child_spec(opts) do
-    [{:id, id} | _] = opts
-
     %{
-      id: id,
+      id: opts[:id],
       start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: :permanent,
@@ -19,37 +14,24 @@ defmodule FarmUnit.Sensor.FakeSensor do
   end
 
   def start_link(args) do
-    Task.start_link(__MODULE__, :loop, [args[:name]])
+    Task.start_link(__MODULE__, :loop, [args])
   end
 
-  def loop(name) do
-    receive do
-      # not doing anything with messages
-    after
-      # receive timeout
-      @update_interval ->
-        emit_results(name)
-        loop(name)
-    end
+  def loop(args) do
+    Process.sleep(@update_interval)
+
+    emit_results(args)
+
+    loop(args)
   end
 
-  defp emit_results(name) do
-    data = {
-      :sensor_update,
-      %Sensor{
-        node: "fake-node",
-        chip: __MODULE__,
-        attribute: name
-      },
+  defp emit_results(args) do
+    FarmUnit.emit_measurement(
       %Measurement{
         time: DateTime.utc_now(),
         value: :rand.uniform(100)
-      }
-    }
-
-    PubSub.publish(String.to_atom(name), data)
-    # TODO send more metadata (unit_id, sensor name..)
+      },
+      args
+    )
   end
-
-  def attributes(), do: [:i_have_to_rethink_this]
 end

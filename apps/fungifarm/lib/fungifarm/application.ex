@@ -15,7 +15,7 @@ defmodule Fungifarm.Application do
       # Fungifarm.Database,
       # Fungifarm.FarmunitRegistry,
       # Uplink.Satelite
-      Uplink.Satelite
+      Fungifarm.SinkManager
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Fungifarm.Supervisor)

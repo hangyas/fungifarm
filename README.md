@@ -33,12 +33,10 @@ _build/prod/rel/fat_farmunit/bin/fat_farmunit remote
 
 **farmunit:** application running on the raspberry, sensors and basic automation control
  - connects to the `fungifarm` node - but keeps running without it
- - send measurement data for processing to `que` (processed and saved by `fungifarm`)
- - measurement data is first emited with `PubSub` - subscribed by `fungifarm_web`, and by itself
+ - emits measurement data into the `"sensor_subscribers:<unit-name>"` group and store the into a `PulletMQ`
 
 **fungifarm:** main application running on the server, db connection, etc.
- - keeps track of running farmunits
- - processes `que` jobs
+ - read data from the connected units' `"measurement:<unit-name>"`
  - saves/loads data from db
 
 **fungifarm_web:** web interface
@@ -48,16 +46,31 @@ _build/prod/rel/fat_farmunit/bin/fat_farmunit remote
 
 ## Connection
 
-`farmunit`s connect to the `fungifarm` server (`FarmUnit.ServerConnector`) (address is in the configuration), send their metadata (`FarmunitRegistry.register`), monitor the connection and reconnect if need be
+`farmunit`s connect to the `fungifarm` server (`Uplink`) (address is in the configuration). Announces themselves with an rpc call to `Fungifarm.SinkManager`. `Fungifarm.SinkManager` creates a `DataSink` for the measurement queue defined in the unit's metadata. `SinkManager` also gets all the units at startup from the `:uplinks` group.
 
-`fungifarm` and `fungifarm_web` subscribe to the messages emitted by the `farmunit`s, might send control messages (`Uplink`, `FarmunitRegistry`)
+`fungifarm_web` or any other process can later find all units and their processes via `:syn`
+
+## important syn names
+
+ - `"measurement:<unit-name>"`: PulletMQ on every unit
+ - `Fungifarm.SinkManager`: Starts a `DataSink` for every measurement queue - actually only used by locally, through `SinkManager`'s frontend
+
+groups
+
+ - `:uplinks`
+ - `"sensor_subscribers:<unit-name>"`: subscribers for immediate sensor updates (`FarmUnit.MeasurementsLoader`) joins this too
+
+Unit specific names are in `FarmUnit.Procnames`
 
 ## TODO
 
- - [ ] log `farmunit` failures on `fungifarm`
+ - [x] use syn groups for PubSub?
+ - [ ] clean up sensor code
+ - [ ] option to share db between PulletMQ instances
+ - [x] maybe pipe messages from PubSub right into PulletMQ
  - [x] https://github.com/ostinelli/syn
  - [ ] https://github.com/keathley/vapor/
- - [ ] option to share db between PulletMQ instances
  - [ ] [add web based observer](https://github.com/zorbash/observer_live)
- - [ ] maybe pipe messages from PubSub right into PulletMQ
- - [ ] use syn groups for PubSub?
+ - [ ] log `farmunit` failures on `fungifarm`
+ - [ ] update phoenix to 1.5 and use liveview generators
+ - [ ] update `fungifarm_web` to the recent changes

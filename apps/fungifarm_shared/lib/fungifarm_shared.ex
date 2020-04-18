@@ -1,3 +1,0 @@
-defmodule FungifarmShared do
-
-end

@@ -26,9 +26,6 @@ defmodule Fungifarm.DataSink do
 
       {:DOWN, _, :process, _, :noconnection} ->
         IO.puts("datasink stopped")
-
-      error ->
-        IO.inspect(error)
     end
   end
 

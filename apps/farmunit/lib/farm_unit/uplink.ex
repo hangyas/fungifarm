@@ -1,5 +1,4 @@
-defmodule Uplink.Connector do
-
+defmodule FarmUnit.Uplink do
   @moduledoc ~S"""
   "client" side of the connection
 
@@ -28,6 +27,7 @@ defmodule Uplink.Connector do
   end
 
   def start(opts) do
+    :syn.join(:uplinks, self(), opts[:metadata])
     connect(opts)
   end
 
@@ -38,8 +38,9 @@ defmodule Uplink.Connector do
 
     try do
       with true <- Node.connect(remote),
-           true <- Node.monitor(remote, true),
-           :ok <- Uplink.Satelite.add_uplink(remote, node(), opts[:metadata]) do
+           true <- Node.monitor(remote, true) do
+
+        :rpc.call(remote, Fungifarm.SinkManager, :register_uplink, [opts[:metadata]])
         IO.puts("Connected")
         monitor(opts)
       else

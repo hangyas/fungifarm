@@ -7,7 +7,6 @@ defmodule FarmUnit.Sensor.SensorHelperTest do
     assert SensorHelper.remove_spikes([1, 2, 3, 343]) == [1, 2, 3]
     assert SensorHelper.remove_spikes([1, 2, 3, -6]) == [1, 2, 3]
     assert SensorHelper.remove_spikes([1, 2, 3]) == [1, 2, 3]
-    # assert SensorHelper.remove_spikes([1, 115, 2]) == [1, 2]
     assert SensorHelper.remove_spikes([3, 2, 3]) == [3, 2, 3]
     IO.inspect SensorHelper.remove_spikes([44, 50, 50]) == [50, 50]
     assert SensorHelper.remove_spikes([44, 50, 50]) == [50, 50]

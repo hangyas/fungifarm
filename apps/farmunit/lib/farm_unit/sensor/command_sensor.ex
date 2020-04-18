@@ -7,10 +7,8 @@ defmodule FarmUnit.Sensor.CommandSensor do
   @update_interval 5_000
 
   def child_spec(opts) do
-    [{:id, id} | _] = opts
-
     %{
-      id: id,
+      id: opts[:id],
       start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: :permanent,
