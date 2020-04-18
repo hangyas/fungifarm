@@ -16,7 +16,8 @@ defmodule PulletMQ do
 
   @initial_state %{
     config: %{},
-    cub: nil,
+    cub_db: nil,
+    queue: nil,
     requests: []
   }
 
@@ -28,14 +29,13 @@ defmodule PulletMQ do
     - process_name name to be registered on syn
   """
   def start_link(opts) do
-    state =
-      @initial_state
-      |> Map.put(:config, Map.new(opts))
+    state = %{@initial_state | config: Map.new(opts)}
 
     with {:ok, pid} <- GenServer.start_link(__MODULE__, state, name: opts[:queue_id]) do
       if state.config[:process_name] != nil do
         :syn.register(state.config[:process_name], pid)
       end
+
       {:ok, pid}
     else
       error -> error
@@ -67,13 +67,12 @@ defmodule PulletMQ do
 
   def init(state) do
     # if any of these dies, the queue will die, which is fine for now
-    {:ok, cub_db} = CubDB.start_link(data_dir: state.config.data_dir, auto_compact: true, auto_file_sync: true)
+    {:ok, cub_db} =
+      CubDB.start_link(data_dir: state.config.data_dir, auto_compact: true, auto_file_sync: true)
+
     {:ok, cub_q} = CubQ.start_link(db: cub_db, queue: state.config.queue_id)
 
-    state =
-      state
-      |> Map.put(:cub_db, cub_db)
-      |> Map.put(:queue, cub_q)
+    state = %{state | cub_db: cub_db, queue: cub_q}
 
     {:ok, state}
   end
@@ -82,9 +81,7 @@ defmodule PulletMQ do
     with {req, requests_tail} <- pop_request(state.requests) do
       answer_request(req, item)
 
-      state =
-        state
-        |> Map.put(:requests, requests_tail)
+      state = %{state | requests: requests_tail}
 
       {:reply, :ok, state}
     else
@@ -103,9 +100,7 @@ defmodule PulletMQ do
     else
       nil ->
         # subscribe for push event
-        state =
-          state
-          |> Map.put(:requests, state.requests ++ [destionation])
+        state = %{state | requests: state.requests ++ [destionation]}
 
         {:reply, :ok, state}
     end
@@ -122,7 +117,7 @@ defmodule PulletMQ do
   defp pop_request(requests) do
     [req | tail] = requests
 
-    if :rpc.call(node(req), Process, :alive?, [ req ]) do
+    if :rpc.call(node(req), Process, :alive?, [req]) do
       {req, tail}
     else
       pop_request(tail)
