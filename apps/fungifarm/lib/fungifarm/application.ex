@@ -5,16 +5,7 @@ defmodule Fungifarm.Application do
     import Supervisor.Spec
 
     children = [
-      # worker(Mongo, [
-      #   [
-      #     name: :mongo,
-      #     database: "habzsibot",
-      #     pool_size: 2,
-      #     url: Application.get_env(:fungifarm, :db_url)
-      #   ]
-      # Fungifarm.Database,
-      # Fungifarm.FarmunitRegistry,
-      # Uplink.Satelite
+      Fungifarm.Database,
       Fungifarm.SinkManager
     ]
 

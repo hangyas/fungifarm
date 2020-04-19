@@ -40,7 +40,7 @@ defmodule FarmUnit.Uplink do
       with true <- Node.connect(remote),
            true <- Node.monitor(remote, true) do
 
-        :rpc.call(remote, Fungifarm.SinkManager, :register_uplink, [opts[:metadata]])
+        :ok = :rpc.call(remote, Fungifarm.SinkManager, :register_uplink, [opts[:metadata], [from: node()]])
         IO.puts("Connected")
         monitor(opts)
       else
@@ -64,7 +64,7 @@ defmodule FarmUnit.Uplink do
         connect(opts)
 
       error ->
-        IO.puts("Unkown error in ServerConnector:")
+        IO.puts("Unkown error in Uplink:")
         IO.inspect(error)
         monitor(opts)
     end

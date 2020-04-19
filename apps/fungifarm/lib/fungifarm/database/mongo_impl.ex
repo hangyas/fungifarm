@@ -3,20 +3,22 @@ defmodule Fungifarm.Database.MongoImpl do
   @behaviour Impl
 
   @db :mongo
-  @collection_prefix Application.get_env(:fungifarm, :collection_prefix)
-  @readonly Application.get_env(:fungifarm, :readonly, false)
 
-  def child_spec(opts) do
+  @config Application.get_env(:fungifarm, :mongo_conf)
+  @collection_prefix @config[:collection_prefix]
+  @readonly @config[:readonly]
+
+  def child_spec(_opts) do
     %{
       id: __MODULE__,
-      start: {__MODULE__, :start_link, [opts]},
+      start: {__MODULE__, :start_link, []},
       type: :worker,
       restart: :permanent,
       shutdown: 500
     }
   end
 
-  def start_link(_args) do
+  def start_link() do
     import Supervisor.Spec
 
     children = [
@@ -24,7 +26,7 @@ defmodule Fungifarm.Database.MongoImpl do
         [
           name: @db,
           pool_size: 2,
-          url: Application.get_env(:fungifarm, :db_url)
+          url: @config[:db_url]
         ]
       ])
     ]
@@ -39,21 +41,22 @@ defmodule Fungifarm.Database.MongoImpl do
   # def get_something(), do: impl().get_something()
 
   @impl true
-  def save(sensor, measurement) do
+  def save(collection, measurement) do
+    collection = collection_key(collection)
     unless @readonly do
-      Mongo.insert_one(@db, @collection_prefix <> "_" <> sensor.attribute, measurement)
+      Mongo.insert_one(@db, collection, measurement)
     end
   end
 
   @impl true
-  def current(attr) do
-    [current] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{time: -1}, limit: 1) |> Enum.to_list
+  def current(collection) do
+    [current] = Mongo.find(@db, collection_key(collection), %{}, sort: %{time: -1}, limit: 1) |> Enum.to_list
     with_atom_keys(current)
   end
 
   @impl true
-  def get_range(attr, from, until) do
-    Mongo.find(@db, @collection_prefix <> "_" <> attr,
+  def get_range(collection, from, until) do
+    Mongo.find(@db, collection_key(collection),
       %{time: %{
         "$lte": until,
         "$gte": from
@@ -65,21 +68,21 @@ defmodule Fungifarm.Database.MongoImpl do
   end
 
   @impl true
-  def min(attr, from, until) do
-    [min] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: 1}, limit: 1) |> Enum.to_list
+  def min(collection, from, until) do
+    [min] = Mongo.find(@db, collection_key(collection), %{}, sort: %{value: 1}, limit: 1) |> Enum.to_list
     with_atom_keys(min)
   end
 
   @impl true
-  def max(attr, from, until) do
-    [max] = Mongo.find(@db, @collection_prefix <> "_" <> attr, %{}, sort: %{value: -1}, limit: 1) |> Enum.to_list
+  def max(collection, from, until) do
+    [max] = Mongo.find(@db, collection_key(collection), %{}, sort: %{value: -1}, limit: 1) |> Enum.to_list
     with_atom_keys(max)
   end
 
   @impl true
-  def avg(attr, from, until) do
+  def avg(collection, from, until) do
     # avg aggregation isn't allowed in the free atlas tier
-    data = Mongo.find(@db, @collection_prefix <> "_" <> attr,
+    data = Mongo.find(@db, collection_key(collection),
       %{time: %{
         "$lte": until,
         "$gte": from
@@ -104,6 +107,20 @@ defmodule Fungifarm.Database.MongoImpl do
         {key, val}
       end
     end
+  end
+
+  defp collection_key(collection) do
+    collection = case collection do
+      str when is_bitstring(str) -> str
+      atom when is_atom(atom) ->
+        full = Atom.to_string(atom)
+        case full do
+          "Elixir." <> id -> id
+          id -> id
+        end
+    end
+
+    @collection_prefix <> collection
   end
 
 end

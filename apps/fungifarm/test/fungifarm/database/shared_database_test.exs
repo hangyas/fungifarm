@@ -2,20 +2,16 @@ defmodule Fungifarm.SharedDatabaseTest do
   import SharedTestCase
 
   define_tests do
-    alias Fungifarm.{Sensor, Measurement}
+    alias Fungifarm.{Measurement}
 
     setup %{database: database} do
-      database.start_link(%{})
+      database.start_link()
       :ok
     end
 
     def test_save(database, attr, value, time \\ DateTime.utc_now()) do
       database.save(
-        %Sensor{
-          node: "fake-node",
-          chip: "fake-chip",
-          attribute: attr
-        },
+        attr,
         %Measurement{
           time: time,
           value: value

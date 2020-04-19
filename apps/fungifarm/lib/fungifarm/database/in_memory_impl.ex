@@ -4,8 +4,10 @@ defmodule Fungifarm.Database.InMemoryImpl do
   alias Fungifarm.Database.Impl
   @behaviour Impl
 
+  def start_link(), do: start_link(nil)
+
   def start_link(_) do
-    GenServer.start_link(__MODULE__, %{"humidity" => [], "temperature" => []}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
   @impl Impl
@@ -37,8 +39,8 @@ defmodule Fungifarm.Database.InMemoryImpl do
   end
 
   @impl Impl
-  def save(sensor, measurement) do
-    GenServer.call(__MODULE__, {:save, sensor, measurement})
+  def save(collection, measurement) do
+    GenServer.call(__MODULE__, {:save, collection, measurement})
   end
 
   # Server
@@ -49,10 +51,10 @@ defmodule Fungifarm.Database.InMemoryImpl do
   end
 
   @impl GenServer
-  def handle_call({:save, sensor, measurement}, _from, db) do
-    vals = Map.get(db, sensor.attribute, [])
+  def handle_call({:save, collection, measurement}, _from, db) do
+    vals = Map.get(db, collection, [])
     vals = vals ++ [measurement]
-    db = Map.put(db, sensor.attribute, vals)
+    db = Map.put(db, collection, vals)
     {:reply, :ok, db}
   end
 

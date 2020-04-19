@@ -1,42 +1,31 @@
 defmodule Fungifarm.DataSink do
-  alias Fungifarm.{Database, Uplink}
+  alias Fungifarm.{Database, Measurement}
 
-  # Database.save(sensor, measurement)
-
-  def start_link(pullet_proc_name) do
-    Task.start_link(__MODULE__, :main, [pullet_proc_name])
+  def start_link(pullet_mq) do
+    Task.start_link(__MODULE__, :main, [pullet_mq])
   end
 
-  def main(pullet_proc_name) do
-    # waits for syn
-    pullet = get_pid(pullet_proc_name)
+  def main(pullet_mq) do
+    Process.monitor(pullet_mq)
 
-    Process.monitor(pullet)
-
-    loop(pullet)
+    loop(pullet_mq)
   end
 
   defp loop(pullet) do
-    PulletMQ.request(pullet)
+    try do
+      PulletMQ.request(pullet)
+    catch
+      :exit, {{:nodedown, _}, _} ->
+        IO.puts("pullet's node is down")
+    end
 
     receive do
-      {:item, item} ->
-        IO.inspect(item)
+      {:item, {measurement = %Measurement{}, metadata}} ->
+        Database.save(metadata[:id], measurement)
         loop(pullet)
 
       {:DOWN, _, :process, _, :noconnection} ->
         IO.puts("datasink stopped")
-    end
-  end
-
-  defp get_pid(name) do
-    pid = :syn.whereis(name)
-
-    if pid == :undefined do
-      Process.sleep(500) # TODO this probably isnt the best solution
-      get_pid(name)
-    else
-      pid
     end
   end
 end

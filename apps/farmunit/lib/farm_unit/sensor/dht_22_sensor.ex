@@ -1,15 +1,10 @@
 defmodule FarmUnit.Sensor.DHT22Sensor do
-  alias FarmUnit.Sensor.Impl
-  alias Fungifarm.{Sensor, Measurement}
+  alias Fungifarm.Measurement
   import FarmUnit.Sensor.SensorHelper
 
-  @behaviour Impl
-
   def child_spec(opts) do
-    [{:id, id} | _] = opts
-
     %{
-      id: id,
+      id: opts[:id],
       start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: :permanent,
@@ -17,23 +12,23 @@ defmodule FarmUnit.Sensor.DHT22Sensor do
     }
   end
 
-  def start_link(args) do
-    Task.start_link(__MODULE__, :loop, [args[:settings]])
+  def start_link(opts) do
+    Task.start_link(__MODULE__, :loop, [Map.new(opts)])
   end
 
-  def loop(settings = %{update_interval: update_interval}) do
-    reading = read_attributes(settings)
+  def loop(opts = %{update_interval: update_interval}) do
+    reading = read_attributes(opts)
     emit_attribute_values(reading)
 
     Process.sleep(update_interval)
-    loop(settings)
+    loop(opts)
   end
 
-  defp read_attributes(settings) do
-    process_samples(read_samples(settings))
+  defp read_attributes(opts) do
+    process_samples(read_samples(opts))
   end
 
-  def read_samples(_settings = %{command: command, sample_size: sample_size}) do
+  def read_samples(_opts = %{command: command, sample_size: sample_size}) do
     Enum.map(1..sample_size, fn _ -> run_command(command) end)
   end
 
@@ -61,23 +56,12 @@ defmodule FarmUnit.Sensor.DHT22Sensor do
   end
 
   defp emit_attribute_value(name, value) do
-    message = {
-      :sensor_update,
-      %Sensor{
-        node: "fake-node",
-        chip: __MODULE__,
-        attribute: name
-      },
+    FarmUnit.emit_measurement(
       %Measurement{
         time: DateTime.utc_now(),
         value: value
-      }
-    }
-
-    # TODO send more metadata (unit_id, sensor name..)
-
-    PubSub.publish(String.to_atom(name), message)
+      },
+      %{ name: name }
+    )
   end
-
-  def attributes(), do: [:i_have_to_rethink_this]
 end

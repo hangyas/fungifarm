@@ -8,7 +8,7 @@ defmodule Fungifarm.Database do
   def get_something(), do: impl().get_something()
 
   @impl true
-  def save(sensor, measurement), do: impl().save(sensor, measurement)
+  def save(collection, measurement), do: impl().save(collection, measurement)
 
   @impl true
   def current(attr), do: impl().current(attr)
