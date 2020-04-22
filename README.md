@@ -13,6 +13,16 @@ scp -r _build/prod/rel/farmunit/ pi@192.168.1.10:/home/pi
 iex --name fungifarm@192.168.1.11 --cookie (cat cookie) -S mix phx.server
 ```
 
+## Test
+
+```
+mix test
+# or
+mix test --exclude slow:true
+# or
+mix test --exclude database:Fungifarm.Database.MongoImpl
+```
+
 ## Attach
 
 observer
@@ -65,6 +75,7 @@ Unit specific names are in `FarmUnit.Procnames`
 ## TODO
 
  - [x] use syn groups for PubSub?
+ - [x] exclude mongo tests + clean the db before they run
  - [ ] clean up sensor code
  - [ ] option to share db between PulletMQ instances
  - [x] maybe pipe messages from PubSub right into PulletMQ

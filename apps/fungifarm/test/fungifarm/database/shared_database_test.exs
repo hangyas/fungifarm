@@ -6,6 +6,11 @@ defmodule Fungifarm.SharedDatabaseTest do
 
     setup %{database: database} do
       database.start_link()
+
+      if database == Fungifarm.Database.MongoImpl do
+        Mongo.command(:mongo, %{dropDatabase: 1})
+      end
+
       :ok
     end
 
@@ -19,10 +24,12 @@ defmodule Fungifarm.SharedDatabaseTest do
       )
     end
 
-    def gen_attr(), do: "test-#{System.unique_integer([:positive, :monotonic])}"
+    def gen_attr(database) do
+      "test-#{System.unique_integer([:positive, :monotonic])}"
+    end
 
     test "last record is the current", %{database: database} do
-      attr = gen_attr()
+      attr = gen_attr(database)
       value = :rand.uniform(100)
 
       test_save(database, attr, value - 1)
@@ -32,7 +39,7 @@ defmodule Fungifarm.SharedDatabaseTest do
     end
 
     test "return range", %{database: database} do
-      attr = gen_attr()
+      attr = gen_attr(database)
       now = DateTime.utc_now()
 
       day = 60 * 60 * 24
@@ -69,7 +76,7 @@ defmodule Fungifarm.SharedDatabaseTest do
     end
 
     test "min", %{database: database} do
-      attr = gen_attr()
+      attr = gen_attr(database)
 
       test_save(database, attr, 1)
       test_save(database, attr, 2)
@@ -81,7 +88,7 @@ defmodule Fungifarm.SharedDatabaseTest do
 
 
     test "max", %{database: database} do
-      attr = gen_attr()
+      attr = gen_attr(database)
 
       test_save(database, attr, 1)
       test_save(database, attr, 2)
@@ -92,7 +99,7 @@ defmodule Fungifarm.SharedDatabaseTest do
     end
 
     test "avg", %{database: database} do
-      attr = gen_attr()
+      attr = gen_attr(database)
 
       test_save(database, attr, 1)
       test_save(database, attr, 2)
@@ -109,5 +116,5 @@ defmodule Fungifarm.Database.InMemoryImplTest do
 end
 
 defmodule Fungifarm.Database.MongoImplTest do
-  use Fungifarm.SharedDatabaseTest, database: Fungifarm.Database.MongoImpl
+  use Fungifarm.SharedDatabaseTest, database: Fungifarm.Database.MongoImpl, slow: true
 end
