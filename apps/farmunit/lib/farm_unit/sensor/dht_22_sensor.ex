@@ -17,19 +17,21 @@ defmodule FarmUnit.Sensor.DHT22Sensor do
   end
 
   def loop(opts = %{update_interval: update_interval}) do
-    reading = read_attributes(opts)
-    emit_attribute_values(reading)
+    read_samples(opts) |> process_samples() |> emit_results()
 
     Process.sleep(update_interval)
     loop(opts)
   end
 
-  defp read_attributes(opts) do
-    process_samples(read_samples(opts))
-  end
-
   def read_samples(_opts = %{command: command, sample_size: sample_size}) do
     Enum.map(1..sample_size, fn _ -> run_command(command) end)
+  end
+
+  defp run_command(command) do
+    [command | args] = String.split(command, " ")
+    {json, 0} = System.cmd(command, args)
+    {:ok, r = %{"temperature" => _, "humidity" => _}} = JSON.decode(json)
+    r
   end
 
   def process_samples(samples) do
@@ -42,26 +44,23 @@ defmodule FarmUnit.Sensor.DHT22Sensor do
     |> Enum.map(fn {key, values} -> {key, Enum.sum(values) / length(values)} end)
   end
 
-  defp run_command(command) do
-    [command | args] = String.split(command, " ")
-    {json, 0} = System.cmd(command, args)
-    {:ok, r} = JSON.decode(json)
-    r
-  end
-
-  defp emit_attribute_values(data) do
-    Enum.each(data, fn {name, value} ->
-      emit_attribute_value(name, value)
-    end)
-  end
-
-  defp emit_attribute_value(name, value) do
+  defp emit_results(%{"temperature" => temperature, "humidity" => humidity}) do
     FarmUnit.emit_measurement(
       %Measurement{
         time: DateTime.utc_now(),
-        value: value
+        value: temperature
       },
-      %{ name: name }
+      id: Sensors.DHT22.Temperature,
+      name: "temperature"
+    )
+
+    FarmUnit.emit_measurement(
+      %Measurement{
+        time: DateTime.utc_now(),
+        value: humidity
+      },
+      id: Sensors.DHT22.Humidity,
+      name: "humidity"
     )
   end
 end

@@ -77,6 +77,8 @@ Unit specific names are in `FarmUnit.Procnames`
  - [x] use syn groups for PubSub?
  - [x] exclude mongo tests + clean the db before they run
  - [ ] clean up sensor code
+ - [ ] change mongodb driver
+ - [ ] test on raspberry
  - [ ] option to share db between PulletMQ instances
  - [x] maybe pipe messages from PubSub right into PulletMQ
  - [x] https://github.com/ostinelli/syn
